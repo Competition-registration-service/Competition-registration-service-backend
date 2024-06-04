@@ -61,6 +61,9 @@ public class User {
     @Column(name = "change_date")
     private Date changeDate;
 
+    @Column(name = "activation_code")
+    private String activeCode;
+
     @ManyToOne
     @JoinColumn(name = "ref_education_id", referencedColumnName = "id")
     private RefValue refEducation;

@@ -45,6 +45,8 @@ public class UserDto {
 
     private String telegram;
 
+    private String activeCode;
+
     private Date createDate;
 
     private Date changeDate;
