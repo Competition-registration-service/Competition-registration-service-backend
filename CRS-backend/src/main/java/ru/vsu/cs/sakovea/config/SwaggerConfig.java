@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
                         email = "glavnii.homa@gmail.com"
                 )
         ),
-        servers = { //http://localhost:5000/swagger-ui/index.html
-                @Server(url = "http://localhost:5000", description = "сервер для разработки"),
+        servers = { //http://localhost:8080/swagger-ui/index.html
+                @Server(url = "http://localhost:8080", description = "сервер для разработки"),
         }
 )
 public class SwaggerConfig {

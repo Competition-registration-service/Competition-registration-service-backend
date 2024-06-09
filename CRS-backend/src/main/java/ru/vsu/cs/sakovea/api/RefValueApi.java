@@ -11,7 +11,7 @@ import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 
 import java.util.List;
 
-@Tag(name = "Контроллер пользователя", description = "Действия с профилем")
+@Tag(name = "Контроллер словаря", description = "Действия со словарем")
 @RequestMapping("/ref-value")
 public interface RefValueApi {
 
@@ -20,31 +20,16 @@ public interface RefValueApi {
             description = "Возвращает информацию о словаре"
     )
     @GetMapping("/values/{domainCid}")
-    ResponseEntity<List<RefValueDto>> getRefValuesByDomainCid(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                              @PathVariable int domainCid);
+    ResponseEntity<List<RefValueDto>> getRefValuesByDomainCid(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable ("domainCid") int domainCid);
 
     @Operation(
             summary = "Получение конкретного значения словаря",
             description = "Возвращает информацию о конкретном значение словаря"
     )
     @GetMapping("/values/{valueCid}")
-    ResponseEntity<RefValueDto> getRefValuesByValueCid(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                       @PathVariable String valueCid);
-
-    @Operation(
-            summary = "Редактирование значения словаря",
-            description = "Обновляет значение словаря"
-    )
-    @PostMapping("/values/{valueCid}/update")
-    ResponseEntity<RefValueDto> updateRefValuesByValueCid(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                          @RequestBody RefValueDto refValueDto);
-
-    @Operation(
-            summary = "Удаление объявления",
-            description = "Удаляет объявление и ничего не возвращает"
-    )
-    @DeleteMapping("/values/{valueCid}/delete")
-    ResponseEntity<Void> deleteRefValueByValueCid(
+    ResponseEntity<RefValueDto> getRefValuesByValueCid(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable String valueCid);
+            @PathVariable ("valueCid") String valueCid);
 }

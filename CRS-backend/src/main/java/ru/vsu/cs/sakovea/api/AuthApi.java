@@ -28,7 +28,9 @@ public interface AuthApi {
             description = "Возвращает JWT-токен для переданных логина и пароля"
     )
     @PostMapping("/login")
-    ResponseEntity<JWTResponseDto> login(HttpServletResponse response, @RequestBody JWTRequest jwtRequest);
+    ResponseEntity<JWTResponseDto> login(
+            HttpServletResponse response,
+            @RequestBody JWTRequest jwtRequest);
 
 
     @Operation(
@@ -36,5 +38,7 @@ public interface AuthApi {
             description = "Создаёт пользователя и возвращает JWT-токен"
     )
     @PostMapping ("/register")
-    ResponseEntity<JWTResponseDto> register(HttpServletResponse response, @RequestBody JWTRegistrationDto jwtRegistrationDto);
+    ResponseEntity<JWTResponseDto> register(
+            HttpServletResponse response,
+            @RequestBody JWTRegistrationDto jwtRegistrationDto);
 }
