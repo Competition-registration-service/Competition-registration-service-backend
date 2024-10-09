@@ -26,7 +26,7 @@ public class User {
     private String name;
 
     @Column(name = "surename")
-    private boolean surename;
+    private String surename;
 
     @Column(name = "thirdname")
     private String thirdname;
@@ -63,6 +63,9 @@ public class User {
 
     @Column(name = "activation_code")
     private String activeCode;
+
+    @Column(name = "activation_code")
+    private boolean isAdmin;
 
     @ManyToOne
     @JoinColumn(name = "ref_education_id", referencedColumnName = "id")
