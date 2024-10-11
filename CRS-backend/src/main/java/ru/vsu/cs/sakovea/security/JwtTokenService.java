@@ -7,6 +7,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.vsu.cs.sakovea.models.Role;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
@@ -43,25 +44,11 @@ public class JwtTokenService {
     private static Map<String, Object> getStringObjectMap(UserCompPerm userRole, User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
+        claims.put("name", user.getName());
+        claims.put("surname", user.getSurname());
+        claims.put("thirdname", user.getThirdname());
         claims.put("login", user.getLogin());
-        claims.put("is_admin", user.getIsAdmin());
-        if (userRole != null){
-            claims.put("userRoleId", userRole.getId());
-            claims.put("name", userRole.getName());
-            claims.put("surname", userRole.getSurname());
-            claims.put("patronymic", userRole.getPatronymic());
-            claims.put("role", userRole.getRole().name());
-            claims.put("school", String.valueOf(userRole.getSchool().getId()));
-            if (userRole.getRoleClass() != null) {
-                claims.put("classId", userRole.getRoleClass().getId());
-                claims.put("className", userRole.getRoleClass().getName());
-            }
-        } else {
-            claims.put("name", user.getName());
-            claims.put("surname", user.getSurname());
-            claims.put("patronymic", user.getPatronymic());
-            claims.put("role", Role.GUEST.name());
-        }
+        claims.put("userCompPerms", user.getUserCompPerms().getLast());
         return claims;
     }
 
@@ -79,12 +66,8 @@ public class JwtTokenService {
     }
 
 
-    public String getRole(String token) {
-        return getAllClaimsFromToken(token).get("role", String.class);
-    }
-
-    public String getSchool(String token) {
-        return getAllClaimsFromToken(token).get("school", String.class);
+    public String getUserCompPerms(String token) {
+        return getAllClaimsFromToken(token).get("userCompPerms", String.class);
     }
 
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) throws RuntimeException {

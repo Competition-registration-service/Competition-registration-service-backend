@@ -11,8 +11,6 @@ import ru.vsu.cs.sakovea.api.dto.RegistrationDto;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.repository.UserRepository;
 
-import static org.hibernate.query.sqm.tree.SqmNode.log;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -30,7 +28,7 @@ public class AuthService {
 
         User user = new User();
         user.setName(registrationDto.getName());
-        user.setSurename(registrationDto.getSurename());
+        user.setSurname(registrationDto.getSurename());
         user.setThirdname(registrationDto.getThirdname());
         user.setLogin(registrationDto.getLogin());
         user.setEmail(registrationDto.getEmail());

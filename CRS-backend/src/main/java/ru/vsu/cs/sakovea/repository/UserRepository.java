@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.vsu.cs.sakovea.models.User;
+import ru.vsu.cs.sakovea.models.UserCompPerm;
 
 import java.util.Optional;
 

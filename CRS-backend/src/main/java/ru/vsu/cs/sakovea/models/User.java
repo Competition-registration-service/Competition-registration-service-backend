@@ -25,8 +25,8 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "surename")
-    private String surename;
+    @Column(name = "surname")
+    private String surname;
 
     @Column(name = "thirdname")
     private String thirdname;
