@@ -26,10 +26,8 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetailsImpl loadUserByUsername(String login) throws UsernameNotFoundException {
-        String[] loginSplit = login.split("-");
-        String username = loginSplit[0];
-        User user = getByUsername(username).orElseThrow(() -> new UsernameNotFoundException(
-                String.format("Пользователь '%s' не найден", username)
+        User user = getByUsername(login).orElseThrow(() -> new UsernameNotFoundException(
+                String.format("Пользователь '%s' не найден", login)
         ));
         UserCompPerm userRole = user.getUserCompPerms().getLast();
         return new UserDetailsImpl(user, userRole);

@@ -12,11 +12,11 @@ public interface AuthApi {
 
     @Operation(summary = "Регистрация пользователя")
     @PostMapping("/register")
-    ResponseEntity<String> register(@RequestBody RegistrationDto registrationDto);
+    ResponseEntity<?> register(@RequestBody RegistrationDto registrationDto);
 
     @Operation(summary = "Подтверждение email")
     @GetMapping("/confirm")
-    ResponseEntity<String> confirmEmail(@RequestParam("token") String token);
+    ResponseEntity<?> confirmEmail(@RequestParam("token") String token);
 
     @Operation(summary = "Аутентификация пользователя")
     @PostMapping("/login")

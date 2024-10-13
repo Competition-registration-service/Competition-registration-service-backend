@@ -1,20 +1,24 @@
 package ru.vsu.cs.sakovea.api.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.security.Timestamp;
 import java.util.Date;
 
-@Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Data
 public class RegistrationDto {
 
     private int id;
 
     private String name;
 
-    private String surename;
+    private String surname;
 
     private String thirdname;
 

@@ -14,8 +14,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findUserById(int id);
     Optional<User> findByLogin(String login);
+    User findUserByLogin(String login);
     boolean existsByLogin(String login);
+    User findUserByActiveCode(String activeCode);
 
-    @Query("SELECT u FROM User u WHERE u.name = :name AND u.surename = :surname AND u.thirdname = :patronymic")
+    @Query("SELECT u FROM User u WHERE u.name = :name AND u.surname = :surname AND u.thirdname = :patronymic")
     User findByFullName(@Param("name") String name, @Param("surname") String surname, @Param("patronymic") String patronymic);
 }
