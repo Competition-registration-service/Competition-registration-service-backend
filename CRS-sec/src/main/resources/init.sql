@@ -2,7 +2,7 @@
 CREATE TABLE ref_value
 (
     id SERIAL PRIMARY KEY,
-    domain_cid INT,
+    domain_cid VARCHAR(255),
     value_cid VARCHAR(255),
     short_value VARCHAR(255),
     long_value TEXT,

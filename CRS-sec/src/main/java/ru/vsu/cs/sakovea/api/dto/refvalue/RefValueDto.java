@@ -18,7 +18,7 @@ import java.util.List;
 public class RefValueDto {
 
     private int id;
-    private int domainCid;
+    private String domainCid;
     private String valueCid;
     private String shortValue;
     private String longValue;

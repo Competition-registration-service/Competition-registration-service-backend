@@ -22,7 +22,7 @@ public class RefValue {
     private int id;
 
     @Column(name = "domain_cid")
-    private int domainCid;
+    private String domainCid;
 
     @Column(name = "value_cid")
     private String valueCid;

@@ -106,6 +106,9 @@ public class CompetitionService {
                 List<Competition> competitions = CompetitionMapper.INSTANCE.toCompetitionList(competitionDto.getCompetitions());
                 competition.setCompetitions(competitions);
             }
+            if (competitionDto.getContents() != null){
+                competition.setContents(ContentMapper.INSTANCE.toContentList(competitionDto.getContents()));
+            }
 
         }
         return competitionRepository.save(competition);
@@ -191,6 +194,12 @@ public class CompetitionService {
     }
 
     public List<GetCompetitionDto> getAllCompetition(Integer eventId) {
-        return null;
+        Competition event = competitionRepository.findById(eventId).get();
+        return CompetitionMapper.INSTANCE.toGetCompetitionDtoList(event.getCompetitions());
     }
 }
+
+
+
+
+
