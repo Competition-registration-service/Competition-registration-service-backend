@@ -18,11 +18,10 @@ import ru.vsu.cs.sakovea.service.ContentService;
 @AllArgsConstructor
 public class AdminController implements AdminPanelApi {
 
-    //TODO: спросить про отображение полей в профиле.+
+    //TODO:
     // Поправить корсы. Поправить ссылку на подтверждение почты.
-    // Добавить в джвт токен админ не админ +.
-    // Добавить в обновление ивента добавление в сисок соревнований соревнований. (как в тп с предметами в расписании) +
-    // Добавить проверку админ не админ в сервисе +.
+    // Сделать нормальную обработку ошибок которая будет везде перехватывать и возвращать объект { error: String; code: Integer }
+    // Сделать дто для профиля
 
     private final CompetitionService competitionService;
     private final ContentService contentService;

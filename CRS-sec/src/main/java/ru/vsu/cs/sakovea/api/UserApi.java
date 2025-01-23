@@ -2,6 +2,7 @@ package ru.vsu.cs.sakovea.api;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,14 +11,8 @@ import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 
 @RequestMapping("/user")
+@Tag(name = "Контроллер Пользователя", description = "Управление пользователем")
 public interface UserApi {
-
-//    @Operation(
-//            summary = "Получение пользователя",
-//            description = "Возвращает информацию о пользователе"
-//    )
-//    @GetMapping("/{id}")
-//    ResponseEntity<UserDto> getUser(@PathVariable("id") Integer id);
 
     @Operation(
             summary = "Получение пользователя",

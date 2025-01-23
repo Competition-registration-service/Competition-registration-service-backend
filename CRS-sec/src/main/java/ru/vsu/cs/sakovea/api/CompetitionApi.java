@@ -2,6 +2,7 @@ package ru.vsu.cs.sakovea.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,11 +16,20 @@ import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import java.util.List;
 
 @RequestMapping("/event")
+@Tag(name = "Контроллер соревнований и мероприятий", description = "Управление мероприятиями и соревнованиями")
 public interface CompetitionApi {
 
+    @Operation(
+            summary = "Получение мероприятия",
+            description = "Возвращает мероприятие по айди"
+    )
     @GetMapping("/{id}")
     ResponseEntity<EventDto> getEvent(@PathVariable("id") Integer id);
 
+    @Operation(
+            summary = "Получение соревнования",
+            description = "Возвращает выбранное соревнование"
+    )
     @GetMapping("/competition/{id}")
     ResponseEntity<GetCompetitionDto> getCompetition(@PathVariable("id") Integer id);
 
@@ -35,6 +45,10 @@ public interface CompetitionApi {
             Integer eventId
     );
 
+    @Operation(
+            summary = "Получение страниц или контента мероприятия",
+            description = "Возвращает список страниц или контента данного мероприятия"
+    )
     @GetMapping("/content/{id}")
     ResponseEntity<ContentDto> getEventContent(@PathVariable("id") Integer id);
 }

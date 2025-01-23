@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import ru.vsu.cs.sakovea.api.dto.registration.JWTRequestDto;
 import ru.vsu.cs.sakovea.api.dto.registration.JWTResponseDto;
 import ru.vsu.cs.sakovea.api.dto.registration.RegistrationDto;
+import ru.vsu.cs.sakovea.exeptions.ForbiddenException;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
@@ -116,7 +117,7 @@ public class AuthService {
                 throw new RuntimeException("Error during user authentication", e);
             }
         }
-        return null;
+        throw new ForbiddenException("Пользователь не подтвердил почту");
     }
 
     private boolean isValidRegistrationData(RegistrationDto request) {
