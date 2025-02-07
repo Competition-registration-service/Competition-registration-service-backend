@@ -8,10 +8,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import ru.vsu.cs.sakovea.api.dto.registration.ChangePasswordByEmail;
 import ru.vsu.cs.sakovea.api.dto.registration.JWTRequestDto;
 import ru.vsu.cs.sakovea.api.dto.registration.JWTResponseDto;
 import ru.vsu.cs.sakovea.api.dto.registration.RegistrationDto;
-import ru.vsu.cs.sakovea.exeptions.ForbiddenException;
+import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
@@ -75,6 +76,7 @@ public class AuthService {
 
             userCompPerm.setUser(user);
             userCompPerm.setRefRole(refValueRepository.findRefValueByValueCid(Role.USER.toString()));
+            System.out.println(Role.USER.toString() + " " + "wqerw");
             compPermsRepository.save(userCompPerm);
             System.out.println(refValueRepository.findRefValueByValueCid(Role.USER.toString()).getShortValue());
             roles.add(userCompPerm);
@@ -117,7 +119,18 @@ public class AuthService {
                 throw new RuntimeException("Error during user authentication", e);
             }
         }
-        throw new ForbiddenException("Пользователь не подтвердил почту");
+        throw new ThrowMyException("Пользователь не подтвердил почту");
+    }
+
+    public ResponseEntity<?> changePassword(ChangePasswordByEmail email) {
+        User user = userRepository.findUserByEmail(email.getEmail());
+
+        user.setActiveCode(UUID.randomUUID().toString());
+
+        userRepository.save(user);
+
+        emailSenderService.sendConfirmationEmail(user.getEmail(), user.getActiveCode());
+        return ResponseEntity.ok("Письмо с подтверждением отправлено на почту.");
     }
 
     private boolean isValidRegistrationData(RegistrationDto request) {

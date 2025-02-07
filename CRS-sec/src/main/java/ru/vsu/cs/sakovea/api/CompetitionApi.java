@@ -11,6 +11,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.EventDto;
 import ru.vsu.cs.sakovea.api.dto.competition.GetCompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
+import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 
 import java.util.List;
@@ -47,8 +48,16 @@ public interface CompetitionApi {
 
     @Operation(
             summary = "Получение страниц или контента мероприятия",
-            description = "Возвращает список страниц или контента данного мероприятия"
+            description = "Возвращает страницy или контент данного мероприятия"
     )
     @GetMapping("/content/{id}")
     ResponseEntity<ContentDto> getEventContent(@PathVariable("id") Integer id);
+
+
+    @Operation(
+            summary = "Получение страниц или контента мероприятия",
+            description = "Возвращает страницy или контент данного мероприятия"
+    )
+    @GetMapping("/{id}/contents")
+    ResponseEntity<List<ContentDto>> getEventContents(@PathVariable("id") Integer id);
 }

@@ -3,7 +3,7 @@ package ru.vsu.cs.sakovea.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
-import ru.vsu.cs.sakovea.exeptions.ForbiddenException;
+import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
 import ru.vsu.cs.sakovea.mapper.CompetitionMapper;
 import ru.vsu.cs.sakovea.mapper.ContentMapper;
 import ru.vsu.cs.sakovea.mapper.RefValueMapper;
@@ -11,6 +11,8 @@ import ru.vsu.cs.sakovea.models.Content;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.repository.ContentRepository;
 import ru.vsu.cs.sakovea.repository.RefValueRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,14 @@ public class ContentService {
         if (userDetails.getUserCompPerm() == null ||
                 (!userDetails.getUserCompPerm().getRefRole()
                         .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid()))) {
-            throw new ForbiddenException("Доступ запрещён");
+            throw new ThrowMyException("Доступ запрещён");
+        }
+    }
+
+    private void checkIsUserAdmin(UserDetailsImpl userDetails) {
+        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || !userDetails.getUserCompPerm().getRefRole()
+                .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid())) {
+            throw new ThrowMyException("Доступ запрещён");
         }
     }
 
@@ -38,6 +47,7 @@ public class ContentService {
 
     public Content createContent(UserDetailsImpl userDetails, ContentDto contentDto) {
         forbidAccessForNullUserRole(userDetails);
+        checkIsUserAdmin(userDetails);
         Content content = new Content();
 
         if (contentDto != null){
@@ -46,12 +56,14 @@ public class ContentService {
             content.setRefPage(RefValueMapper.INSTANCE.toRefValue(contentDto.getRefPage()));
             content.setRefFormat(RefValueMapper.INSTANCE.toRefValue(contentDto.getRefFormat()));
             content.setRefLanguage(RefValueMapper.INSTANCE.toRefValue(contentDto.getRefLanguage()));
+            return contentRepository.save(content);
         }
-        return contentRepository.save(content);
+        throw new ThrowMyException("Данные отсутствуют");
     }
 
     public Content updateContent(UserDetailsImpl userDetails, ContentDto contentDto) {
         forbidAccessForNullUserRole(userDetails);
+        checkIsUserAdmin(userDetails);
         Content content = new Content();
 
         if (contentDto.getFeelingContent() != null){
@@ -73,5 +85,9 @@ public class ContentService {
             content.setRefLanguage(RefValueMapper.INSTANCE.toRefValue(contentDto.getRefLanguage()));
         }
         return contentRepository.save(content);
+    }
+
+    public List<ContentDto> getCompetitionContents(Integer id) {
+        return ContentMapper.INSTANCE.toContentDtoList(contentRepository.findByCompetitionId(id));
     }
 }

@@ -20,6 +20,7 @@ CREATE TABLE competition
     start_date TIMESTAMP,
     end_date TIMESTAMP,
     cid VARCHAR(255),
+    competition_content VARCHAR(255),
     parent_id INT,
     ref_competition_id INT,
     ref_comp_count_id INT,

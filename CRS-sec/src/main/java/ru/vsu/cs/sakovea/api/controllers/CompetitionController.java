@@ -43,4 +43,9 @@ public class CompetitionController implements CompetitionApi {
         ContentDto contentDto = contentService.getContent(id);
         return ResponseEntity.ok(contentDto);
     }
+
+    @Override
+    public ResponseEntity<List<ContentDto>> getEventContents(Integer id) {
+        return ResponseEntity.ok(contentService.getCompetitionContents(id));
+    }
 }

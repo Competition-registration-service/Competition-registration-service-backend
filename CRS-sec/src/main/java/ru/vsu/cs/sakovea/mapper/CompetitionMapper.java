@@ -18,6 +18,8 @@ public interface CompetitionMapper {
 
     CompetitionDto toCompetitionDto(Competition competition);
 
+    GetCompetitionDto toGetCompetitionDto(Competition competition);
+
     @IterableMapping(elementTargetType = CompetitionDto.class)
     List<CompetitionDto> toCompetitionDtoList(List<Competition> competitionList);
 

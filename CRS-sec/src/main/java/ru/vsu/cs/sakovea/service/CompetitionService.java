@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.EventDto;
 import ru.vsu.cs.sakovea.api.dto.competition.GetCompetitionDto;
-import ru.vsu.cs.sakovea.exeptions.ForbiddenException;
+import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
 import ru.vsu.cs.sakovea.mapper.*;
 import ru.vsu.cs.sakovea.models.Competition;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
-import ru.vsu.cs.sakovea.models.enums.Role;
 import ru.vsu.cs.sakovea.repository.CompetitionRepository;
 import ru.vsu.cs.sakovea.repository.RefValueRepository;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -23,90 +23,70 @@ public class CompetitionService {
 
     private final RefValueRepository refValueRepository;
 
-    private void forbidAccessForNullUserRole(UserDetailsImpl userDetails) {
-        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin())) {
+//    private void forbidAccessForNullUserRole(UserDetailsImpl userDetails) {
+//        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin())) {
+//            return;
+//        }
+//        if (userDetails.getUserCompPerm() == null ||
+//                (!userDetails.getUserCompPerm().getRefRole()
+//                        .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid()))) {
+//            throw new ThrowMyException("Доступ запрещён");
+//        }
+//    }
+
+    private void checkIsUserAdmin(UserDetailsImpl userDetails) {
+        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || userDetails.getUserCompPerm().getRefRole()
+                .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid())) {
             return;
         }
-        if (userDetails.getUserCompPerm() == null ||
-                (!userDetails.getUserCompPerm().getRefRole()
-                        .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid()))) {
-            throw new ForbiddenException("Доступ запрещён");
-        }
+        throw new ThrowMyException("Доступ запрещён");
     }
 
     public Competition createCompetition(UserDetailsImpl userDetails, CompetitionDto competitionDto) {
-        forbidAccessForNullUserRole(userDetails);
+        checkIsUserAdmin(userDetails);
         Competition competition = new Competition();
 
-        if (competitionDto.getParent() != null){
-            if (competitionDto.getRefCompCount().getValueCid()
-                    .equals(refValueRepository.findRefValueByValueCid("Individual").getValueCid())){
-                return competitionRepository.save(createSingleCompetition(competitionDto));
-            }
-            return competitionRepository.save(createTeamCompetition(competitionDto));
-        } else {
+        if (competitionDto != null) {
             competition.setName(competitionDto.getName());
             competition.setStartDate(competitionDto.getStartDate());
             competition.setEndDate(competitionDto.getEndDate());
             competition.setCid(competitionDto.getCid());
+            if (competitionDto.getParent() != null) competition
+                    .setParent(CompetitionMapper.INSTANCE.toCompetition(competitionDto.getParent()));
+            return competitionRepository.save(competition);
         }
-        return competitionRepository.save(competition);
+        throw new ThrowMyException("Данные отсутствуют");
     }
 
-    private Competition createTeamCompetition(CompetitionDto competitionDto) {
-        Competition competition = new Competition();
-        competition.setName(competitionDto.getName());
-        competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
-        competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
-        return createAllCompetition(competitionDto, competition);
-    }
-
-    private Competition createSingleCompetition(CompetitionDto competitionDto) {
-        Competition competition = new Competition();
-        competition.setName(competitionDto.getName());
-        return createAllCompetition(competitionDto, competition);
-    }
-
-    private Competition createAllCompetition(CompetitionDto competitionDto, Competition competition) {
-        competition.setParent(CompetitionMapper.INSTANCE.toCompetition(competitionDto.getParent()));
-        competition.setStartDate(competitionDto.getStartDate());
-        competition.setEndDate(competitionDto.getEndDate());
-        competition.setCid(competitionDto.getCid());
-        competition.setParent(competitionRepository.findByParentId(competitionDto.getParent().getId()));
-        competition.setRefComp(refValueRepository.findRefValueByValueCid(competitionDto.getRefComp().getValueCid()));
-        competition.setRefCompCount(refValueRepository.findRefValueByValueCid(competitionDto.getRefCompCount().getValueCid()));
-        competition.setRefCompAge(refValueRepository.findRefValueByValueCid(competitionDto.getRefCompAge().getValueCid()));
-        return competition;
-    }
 
     public Competition updateCompetition(UserDetailsImpl userDetails, CompetitionDto competitionDto) {
-        forbidAccessForNullUserRole(userDetails);
+        checkIsUserAdmin(userDetails);
         Competition competition = competitionRepository.findById(competitionDto.getId());
 
-        if (competition.getParent() != null){
+        if (competition.getParent() != null) {
             if (competition.getRefCompCount().getValueCid()
-                    .equals(refValueRepository.findRefValueByValueCid("Individual").getValueCid())){
+                    .equals(refValueRepository.findRefValueByValueCid("Individual").getValueCid())) {
                 return competitionRepository.save(updateSingleCompetition(competition, competitionDto));
             }
             return competitionRepository.save(updateTeamCompetition(competition, competitionDto));
         } else {
-            if (competitionDto.getName() != null){
+            if (competitionDto.getName() != null) {
                 competition.setName(competitionDto.getName());
             }
-            if (competitionDto.getStartDate() != null){
+            if (competitionDto.getStartDate() != null) {
                 competition.setStartDate(competitionDto.getStartDate());
             }
-            if (competitionDto.getEndDate() != null){
+            if (competitionDto.getEndDate() != null) {
                 competition.setEndDate(competitionDto.getEndDate());
             }
-            if (competitionDto.getCid() != null){
+            if (competitionDto.getCid() != null) {
                 competition.setCid(competitionDto.getCid());
             }
-            if (competitionDto.getCompetitions() != null){
+            if (competitionDto.getCompetitions() != null) {
                 List<Competition> competitions = CompetitionMapper.INSTANCE.toCompetitionList(competitionDto.getCompetitions());
                 competition.setCompetitions(competitions);
             }
-            if (competitionDto.getContents() != null){
+            if (competitionDto.getContents() != null) {
                 competition.setContents(ContentMapper.INSTANCE.toContentList(competitionDto.getContents()));
             }
 
@@ -115,54 +95,57 @@ public class CompetitionService {
     }
 
     private Competition updateTeamCompetition(Competition competition, CompetitionDto competitionDto) {
-        if (competitionDto.getName() != null){
+        if (competitionDto.getName() != null) {
             competition.setName(competitionDto.getName());
         }
-        if (competitionDto.getMinNumOfTeamMem() != 0){
+        if (competitionDto.getMinNumOfTeamMem() != 0) {
             competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
         }
-        if (competitionDto.getMaxNumOfTeamMem() != 0){
+        if (competitionDto.getMaxNumOfTeamMem() != 0) {
             competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
         }
         return updateAllCompetition(competitionDto, competition);
     }
 
     private Competition updateSingleCompetition(Competition competition, CompetitionDto competitionDto) {
-        if (competitionDto.getName() != null){
+        if (competitionDto.getName() != null) {
             competition.setName(competitionDto.getName());
         }
         return updateAllCompetition(competitionDto, competition);
     }
 
     private Competition updateAllCompetition(CompetitionDto competitionDto, Competition competition) {
-        if (competitionDto.getStartDate() != null){
+        if (competitionDto.getStartDate() != null) {
             competition.setStartDate(competitionDto.getStartDate());
         }
-        if (competitionDto.getEndDate() != null){
+        if (competitionDto.getEndDate() != null) {
             competition.setEndDate(competitionDto.getEndDate());
         }
-        if (competitionDto.getParent().getId() != 0){
+        if (competitionDto.getParent().getId() != 0) {
             competition.setParent(competitionRepository.findByParentId(competitionDto.getParent().getId()));
         }
-        if (competitionDto.getCid() != null){
+        if (competitionDto.getCid() != null) {
             competition.setCid(competitionDto.getCid());
         }
-        if (competitionDto.getRefComp().getValueCid() != null){
+        if (competitionDto.getCompetitionContent() != null){
+            competition.setCompetitionContent(competitionDto.getCompetitionContent());
+        }
+        if (competitionDto.getRefComp().getValueCid() != null) {
             competition.setRefComp(refValueRepository.findRefValueByValueCid(competitionDto.getRefComp().getValueCid()));
         }
-        if (competitionDto.getRefCompCount().getValueCid() != null){
+        if (competitionDto.getRefCompCount().getValueCid() != null) {
             competition.setRefCompCount(refValueRepository.findRefValueByValueCid(competitionDto.getRefCompCount().getValueCid()));
         }
-        if (competitionDto.getRefCompAge().getValueCid() != null){
+        if (competitionDto.getRefCompAge().getValueCid() != null) {
             competition.setRefCompAge(refValueRepository.findRefValueByValueCid(competitionDto.getRefCompAge().getValueCid()));
         }
-        if (competitionDto.getContents() != null){
+        if (competitionDto.getContents() != null) {
             competition.setContents(ContentMapper.INSTANCE.toContentList(competitionDto.getContents()));
         }
-        if (competitionDto.getFields() != null){
+        if (competitionDto.getFields() != null) {
             competition.setFields(FieldsMapper.INSTANCE.toFieldList(competitionDto.getFields()));
         }
-        if (competitionDto.getFiles() != null){
+        if (competitionDto.getFiles() != null) {
             competition.setFiles(FilesMapper.INSTANCE.toFileList(competitionDto.getFiles()));
         }
         return competition;
@@ -181,16 +164,15 @@ public class CompetitionService {
     }
 
     public GetCompetitionDto getCompetition(Integer id) {
-        GetCompetitionDto competitionDto = new GetCompetitionDto();
-        Competition competition = competitionRepository.findById(id).get();
-        competitionDto.setName(competition.getName());
-        competitionDto.setStartDate(competition.getStartDate());
-        competitionDto.setEndDate(competition.getEndDate());
-        competitionDto.setCid(competition.getCid());
-        competitionDto.setRefComp(RefValueMapper.INSTANCE.toRefValueDto(competition.getRefComp()));
-        competitionDto.setRefCompCount(RefValueMapper.INSTANCE.toRefValueDto(competition.getRefCompCount()));
-        competitionDto.setRefCompAge(RefValueMapper.INSTANCE.toRefValueDto(competition.getRefCompAge()));
-        return competitionDto;
+//        Competition competition = competitionRepository.findById(id).get();
+//        competitionDto.setName(competition.getName());
+//        competitionDto.setStartDate(competition.getStartDate());
+//        competitionDto.setEndDate(competition.getEndDate());
+//        competitionDto.setCid(competition.getCid());
+//        competitionDto.setRefComp(RefValueMapper.INSTANCE.toRefValueDto(competition.getRefComp()));
+//        competitionDto.setRefCompCount(RefValueMapper.INSTANCE.toRefValueDto(competition.getRefCompCount()));
+//        competitionDto.setRefCompAge(RefValueMapper.INSTANCE.toRefValueDto(competition.getRefCompAge()));
+        return CompetitionMapper.INSTANCE.toGetCompetitionDto(competitionRepository.findById(id).get());
     }
 
     public List<GetCompetitionDto> getAllCompetition(Integer eventId) {

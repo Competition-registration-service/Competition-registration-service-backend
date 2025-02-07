@@ -1,17 +1,30 @@
 package ru.vsu.cs.sakovea.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.vsu.cs.sakovea.api.dto.registration.ChangePasswordByEmail;
+import ru.vsu.cs.sakovea.api.dto.user.ChangePasswordDto;
+import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
+import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
+import ru.vsu.cs.sakovea.mapper.UserMapper;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
+import ru.vsu.cs.sakovea.models.enums.Role;
+import ru.vsu.cs.sakovea.repository.RefValueRepository;
 import ru.vsu.cs.sakovea.repository.UserCompPermsRepository;
 import ru.vsu.cs.sakovea.repository.UserRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +36,28 @@ public class UserService implements UserDetailsService {
 
     private final EmailSenderService emailSenderService;
 
+    private final RefValueRepository refValueRepository;
+
     public Optional<User> getByUsername(String login) {
         return userRepository.findByLogin(login);
+    }
+
+    private void forbidAccessForNullUserRole(UserDetailsImpl userDetails) {
+        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin())) {
+            return;
+        }
+        if (userDetails.getUserCompPerm() == null ||
+                (!userDetails.getUserCompPerm().getRefRole()
+                        .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid()))) {
+            throw new ThrowMyException("Доступ запрещён");
+        }
+    }
+
+    private void checkIsUserAdmin(UserDetailsImpl userDetails) {
+        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || !userDetails.getUserCompPerm().getRefRole()
+                .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid())) {
+            throw new ThrowMyException("Доступ запрещён");
+        }
     }
 
     @Override
@@ -78,12 +111,46 @@ public class UserService implements UserDetailsService {
                 existingUser.setPhone(userDto.getPhone());
             }
             return userRepository.save(existingUser);
-        } else {
-            return null;
         }
+        throw new ThrowMyException("Пользователя не существует или нечего изменять");
     }
 
-//    public void updateUserPassword(UserDetailsImpl userDetails, ChangePasswordDto changePasswordDto) {
-//
-//    }
+    public GetUserDto getUser(UserDetailsImpl userDetails) {
+        User user = userRepository.findUserByLogin(userDetails.getUser().getLogin());
+        if (user != null) {
+            return UserMapper.INSTANCE.toGetUserDto(user);
+        }
+        throw new ThrowMyException("Такого пользователя нет");
+    }
+
+    public ResponseEntity<?> updateUserPassword(ChangePasswordDto changePasswordDto, String token) {
+        User user = userRepository.findUserByActiveCode(token);
+        if (user.getActiveCode() != null) {
+            user.setActiveCode(null);
+
+            user.setPassword(changePasswordDto.getPassword());
+
+            userRepository.save(user);
+            return ResponseEntity.ok("Пароль успешно изменен");
+        }
+        throw new ThrowMyException("Подтверждение не получено. Ссылка не действительна или пользователя с такой почтой " +
+                "не существует, введите почту на которую регистрировались!");
+    }
+
+    public List<UserDto> getAllUsersPagination(UserDetailsImpl userDetails, Integer offset, Integer limit) {
+        forbidAccessForNullUserRole(userDetails);
+        checkIsUserAdmin(userDetails);
+        return UserMapper.INSTANCE.toUserDtoList(userRepository.findAll(PageRequest.of(offset, limit)).getContent());
+    }
+
+    public ResponseEntity<?> changePassword(UserDetailsImpl userDetails) {
+        User user = userRepository.findUserByLogin(userDetails.getUser().getLogin());
+
+        user.setActiveCode(UUID.randomUUID().toString());
+
+        userRepository.save(user);
+
+        emailSenderService.sendConfirmationEmail(user.getEmail(), user.getActiveCode());
+        return ResponseEntity.ok("Письмо с подтверждением отправлено на почту.");
+    }
 }
