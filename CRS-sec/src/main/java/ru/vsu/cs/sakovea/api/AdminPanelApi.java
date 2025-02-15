@@ -6,13 +6,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import ru.vsu.cs.sakovea.api.dto.competition.CompetitionCreateDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
+import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
+import ru.vsu.cs.sakovea.models.Competition;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 
 import java.util.List;
@@ -26,22 +28,42 @@ public interface AdminPanelApi {
     String defaultLimit = "25";
 
     @Operation(
-            summary = "Создание соревнования(мероприятия)",
-            description = "Создает мероприятие если parentId == null и если нет, то создает соревнование"
+            summary = "Создание мероприятия",
+            description = "Создает мероприятие"
     )
-    @PostMapping("/competition/create")
-    ResponseEntity<?> createCompetition(HttpServletResponse response,
+    @PostMapping("/event/create")
+    ResponseEntity<?> createEvent(HttpServletResponse response,
+                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                       @RequestBody CreateEventDto eventDto);
+
+    @Operation(
+            summary = "Обновление мероприятия",
+            description = "Обновляет информацию мероприятия"
+    )
+    @PutMapping("/event/update")
+    ResponseEntity<Competition> updateEvent(HttpServletResponse response,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
                                        @RequestBody CompetitionDto competitionDto);
 
     @Operation(
-            summary = "Обновление соревнования(мероприятия)",
-            description = "Обновляет информацию мероприятия если parentId == null и если нет, то соревнования"
+            summary = "Создание соревнования",
+            description = "Создает соревнование"
     )
-    @PutMapping("/competition/update")
-    ResponseEntity<CompetitionDto> updateCompetition(HttpServletResponse response,
-                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                       @RequestBody CompetitionDto competitionDto);
+    @PostMapping("/event/{id}/create-competition")
+    ResponseEntity<?> createCompetition(HttpServletResponse response,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                        @RequestBody CompetitionCreateDto competitionCreateDto,
+                                        @PathVariable ("id") int eventId);
+
+    @Operation(
+            summary = "Обновление соревнования",
+            description = "Обновляет информацию соревнования"
+    )
+    @PutMapping("/event/{id}/update-competition")
+    ResponseEntity<Competition> updateCompetition(HttpServletResponse response,
+                                                     @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                     @RequestBody CompetitionDto competitionDto,
+                                                     @PathVariable ("id") int eventId);
 
     @Operation(
             summary = "Создание контента(страниц) мероприятия или соревнование",

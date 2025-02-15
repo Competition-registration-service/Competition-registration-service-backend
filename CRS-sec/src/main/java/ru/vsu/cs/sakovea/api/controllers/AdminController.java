@@ -3,17 +3,16 @@ package ru.vsu.cs.sakovea.api.controllers;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vsu.cs.sakovea.api.AdminPanelApi;
+import ru.vsu.cs.sakovea.api.dto.competition.CompetitionCreateDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
+import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
-import ru.vsu.cs.sakovea.mapper.CompetitionMapper;
 import ru.vsu.cs.sakovea.mapper.ContentMapper;
+import ru.vsu.cs.sakovea.models.Competition;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.service.CompetitionService;
 import ru.vsu.cs.sakovea.service.ContentService;
@@ -36,13 +35,27 @@ public class AdminController implements AdminPanelApi {
 
 
     @Override
-    public ResponseEntity<?> createCompetition(HttpServletResponse response, UserDetailsImpl userDetails, @Valid CompetitionDto competitionDto) {
-        return ResponseEntity.ok(competitionService.createCompetition(userDetails, competitionDto));
+    public ResponseEntity<?> createEvent(HttpServletResponse response, UserDetailsImpl userDetails, CreateEventDto eventDto) {
+        return ResponseEntity.ok(competitionService.createEvent(userDetails, eventDto));
     }
 
     @Override
-    public ResponseEntity<CompetitionDto> updateCompetition(HttpServletResponse response, UserDetailsImpl userDetails,@Valid CompetitionDto competitionDto) {
-        return ResponseEntity.ok(CompetitionMapper.INSTANCE.toCompetitionDto(competitionService.updateCompetition(userDetails, competitionDto)));
+    public ResponseEntity<Competition> updateEvent(HttpServletResponse response, UserDetailsImpl userDetails, CompetitionDto competitionDto) {
+        return ResponseEntity.ok(competitionService.updateEvent(userDetails, competitionDto));
+    }
+
+
+    /**"Если при создании соревнования выбирается поле "индивидуальное" то поля с максимумом
+     и минимумом челов в команде пропадают или наоборот их нет и если выбирается командное то появляются"
+     **/
+    @Override
+    public ResponseEntity<?> createCompetition(HttpServletResponse response, UserDetailsImpl userDetails, CompetitionCreateDto competitionCreateDto, int eventId) {
+        return ResponseEntity.ok(competitionService.createCompetition(userDetails, competitionCreateDto, eventId));
+    }
+
+    @Override
+    public ResponseEntity<Competition> updateCompetition(HttpServletResponse response, UserDetailsImpl userDetails, CompetitionDto competitionDto, int eventId) {
+        return ResponseEntity.ok(competitionService.updateCompetition(userDetails, competitionDto, eventId));
     }
 
     @Override

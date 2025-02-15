@@ -42,22 +42,12 @@ public class UserService implements UserDetailsService {
         return userRepository.findByLogin(login);
     }
 
-    private void forbidAccessForNullUserRole(UserDetailsImpl userDetails) {
-        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin())) {
+    private void checkIsUserAdmin(UserDetailsImpl userDetails) {
+        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || userDetails.getUserCompPerm().getRefRole()
+                .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid())) {
             return;
         }
-        if (userDetails.getUserCompPerm() == null ||
-                (!userDetails.getUserCompPerm().getRefRole()
-                        .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid()))) {
-            throw new ThrowMyException("Доступ запрещён");
-        }
-    }
-
-    private void checkIsUserAdmin(UserDetailsImpl userDetails) {
-        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || !userDetails.getUserCompPerm().getRefRole()
-                .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid())) {
-            throw new ThrowMyException("Доступ запрещён");
-        }
+        throw new ThrowMyException("Доступ запрещён");
     }
 
     @Override
@@ -138,7 +128,6 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserDto> getAllUsersPagination(UserDetailsImpl userDetails, Integer offset, Integer limit) {
-        forbidAccessForNullUserRole(userDetails);
         checkIsUserAdmin(userDetails);
         return UserMapper.INSTANCE.toUserDtoList(userRepository.findAll(PageRequest.of(offset, limit)).getContent());
     }

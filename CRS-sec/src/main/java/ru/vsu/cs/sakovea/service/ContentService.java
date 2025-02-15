@@ -22,22 +22,12 @@ public class ContentService {
 
     private final RefValueRepository refValueRepository;
 
-    private void forbidAccessForNullUserRole(UserDetailsImpl userDetails) {
-        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin())) {
+    private void checkIsUserAdmin(UserDetailsImpl userDetails) {
+        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || userDetails.getUserCompPerm().getRefRole()
+                .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid())) {
             return;
         }
-        if (userDetails.getUserCompPerm() == null ||
-                (!userDetails.getUserCompPerm().getRefRole()
-                        .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid()))) {
-            throw new ThrowMyException("Доступ запрещён");
-        }
-    }
-
-    private void checkIsUserAdmin(UserDetailsImpl userDetails) {
-        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || !userDetails.getUserCompPerm().getRefRole()
-                .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid())) {
-            throw new ThrowMyException("Доступ запрещён");
-        }
+        throw new ThrowMyException("Доступ запрещён");
     }
 
 
@@ -46,7 +36,6 @@ public class ContentService {
     }
 
     public Content createContent(UserDetailsImpl userDetails, ContentDto contentDto) {
-        forbidAccessForNullUserRole(userDetails);
         checkIsUserAdmin(userDetails);
         Content content = new Content();
 
@@ -62,7 +51,6 @@ public class ContentService {
     }
 
     public Content updateContent(UserDetailsImpl userDetails, ContentDto contentDto) {
-        forbidAccessForNullUserRole(userDetails);
         checkIsUserAdmin(userDetails);
         Content content = new Content();
 
