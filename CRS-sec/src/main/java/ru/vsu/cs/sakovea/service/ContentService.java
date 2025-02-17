@@ -3,12 +3,15 @@ package ru.vsu.cs.sakovea.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
+import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
 import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
 import ru.vsu.cs.sakovea.mapper.CompetitionMapper;
 import ru.vsu.cs.sakovea.mapper.ContentMapper;
 import ru.vsu.cs.sakovea.mapper.RefValueMapper;
+import ru.vsu.cs.sakovea.models.Competition;
 import ru.vsu.cs.sakovea.models.Content;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
+import ru.vsu.cs.sakovea.repository.CompetitionRepository;
 import ru.vsu.cs.sakovea.repository.ContentRepository;
 import ru.vsu.cs.sakovea.repository.RefValueRepository;
 
@@ -19,6 +22,8 @@ import java.util.List;
 public class ContentService {
 
     private final ContentRepository contentRepository;
+
+    private final CompetitionRepository competitionRepository;
 
     private final RefValueRepository refValueRepository;
 
@@ -35,17 +40,22 @@ public class ContentService {
         return ContentMapper.INSTANCE.toContentDto(contentRepository.findById(id));
     }
 
-    public Content createContent(UserDetailsImpl userDetails, ContentDto contentDto) {
+    public Content createContent(UserDetailsImpl userDetails, RequestContentDto contentDto, int competitionId) {
         checkIsUserAdmin(userDetails);
         Content content = new Content();
 
         if (contentDto != null){
             content.setFeelingContent(contentDto.getFeelingContent());
-            content.setCompetition(CompetitionMapper.INSTANCE.toCompetition(contentDto.getCompetition()));
             content.setRefPage(RefValueMapper.INSTANCE.toRefValue(contentDto.getRefPage()));
             content.setRefFormat(RefValueMapper.INSTANCE.toRefValue(contentDto.getRefFormat()));
             content.setRefLanguage(RefValueMapper.INSTANCE.toRefValue(contentDto.getRefLanguage()));
-            return contentRepository.save(content);
+            contentRepository.save(content);
+            Competition competition = competitionRepository.findById(competitionId);
+            if (competition != null) {
+                competition.getContents().add(content);
+                competitionRepository.save(competition);
+            } else throw new ThrowMyException("Мероприятия с таким ID не существует!");
+            return content;
         }
         throw new ThrowMyException("Данные отсутствуют");
     }
@@ -57,17 +67,11 @@ public class ContentService {
         if (contentDto.getFeelingContent() != null){
             content.setFeelingContent(contentDto.getFeelingContent());
         }
-        if (contentDto.getCompetition() != null){
-            content.setCompetition(CompetitionMapper.INSTANCE.toCompetition(contentDto.getCompetition()));
-
-        }
         if (contentDto.getRefPage() != null){
             content.setRefPage(RefValueMapper.INSTANCE.toRefValue(contentDto.getRefPage()));
-
         }
         if (contentDto.getRefFormat() != null){
             content.setRefFormat(RefValueMapper.INSTANCE.toRefValue(contentDto.getRefFormat()));
-
         }
         if (contentDto.getRefLanguage() != null){
             content.setRefLanguage(RefValueMapper.INSTANCE.toRefValue(contentDto.getRefLanguage()));

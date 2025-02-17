@@ -6,10 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.vsu.cs.sakovea.api.dto.contestant.ContestantDto;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
-import ru.vsu.cs.sakovea.api.dto.UserCompPermDto;
+import ru.vsu.cs.sakovea.api.dto.userCompPerms.GetUserCompPermsDto;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -38,5 +37,5 @@ public class UserDto {
     private RefValueDto refEducation;
     private RefValueDto refCourse;
     private RefValueDto refRegion;
-    private List<UserCompPermDto> roles;
+    private List<GetUserCompPermsDto> roles;
 }

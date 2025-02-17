@@ -1,5 +1,6 @@
 package ru.vsu.cs.sakovea.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.competition.*;
@@ -58,29 +59,28 @@ public class CompetitionService {
         checkIsUserAdmin(userDetails);
         Competition competition = competitionRepository.findById(competitionDto.getId());
 
-            if (competitionDto.getName() != null) {
-                competition.setName(competitionDto.getName());
-            }
-            if (competitionDto.getStartDate() != null) {
-                competition.setStartDate(competitionDto.getStartDate());
-            }
-            if (competitionDto.getEndDate() != null) {
-                competition.setEndDate(competitionDto.getEndDate());
-            }
-            if (competitionDto.getCid() != null) {
-                competition.setCid(competitionDto.getCid());
-            }
-            if (competitionDto.getContents() != null) {
-                competition.setContents(ContentMapper.INSTANCE.toContentList(competitionDto.getContents()));
-            }
+        if (competitionDto.getName() != null) {
+            competition.setName(competitionDto.getName());
+        }
+        if (competitionDto.getStartDate() != null) {
+            competition.setStartDate(competitionDto.getStartDate());
+        }
+        if (competitionDto.getEndDate() != null) {
+            competition.setEndDate(competitionDto.getEndDate());
+        }
+        if (competitionDto.getCid() != null) {
+            competition.setCid(competitionDto.getCid());
+        }
 
         return competitionRepository.save(competition);
     }
 
+
+    @Transactional
     public Competition createCompetition(UserDetailsImpl userDetails, CompetitionCreateDto competitionDto, int eventId) {
         checkIsUserAdmin(userDetails);
         Competition competition = new Competition();
-        if (competitionDto != null){
+        if (competitionDto != null) {
             competition.setName(competitionDto.getName());
             competition.setStartDate(competitionDto.getStartDate());
             competition.setEndDate(competitionDto.getEndDate());
@@ -89,23 +89,27 @@ public class CompetitionService {
             competition.setRefCompCount(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompCount()));
             competition.setRefCompAge(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompAge()));
             competition.setCompetitionContent(competitionDto.getCompetitionContent());
-            if (competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() != null) {
+            if (competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() != null
+                    || competitionDto.getMaxNumOfTeamMem() == null && competitionDto.getMinNumOfTeamMem() != null ||
+                    competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() == null) {
                 competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
                 competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
             }
             competitionRepository.save(competition);
-                Competition event = competitionRepository.findById(eventId);
-                if (event != null) {
-                    competition.setParent(event);
-                    competitionRepository.save(competition);
-                    event.getCompetitions().add(competition);
-                    competitionRepository.save(event);
-                } else throw new ThrowMyException("Мероприятия с таким ID не существует!");
+            Competition event = competitionRepository.findById(eventId);
+            if (event != null) {
+                competition.setParent(event);
+                competitionRepository.save(competition);
+                event.getCompetitions().add(competition);
+                competitionRepository.save(event);
+            } else throw new ThrowMyException("Мероприятия с таким ID не существует!");
+            return competition;
         }
         throw new ThrowMyException("Данные отсутствуют");
     }
 
-    public Competition updateCompetition(UserDetailsImpl userDetails, CompetitionDto competitionDto, Integer eventId) {
+
+    public Competition updateCompetition(UserDetailsImpl userDetails, CompetitionDto competitionDto) {
         checkIsUserAdmin(userDetails);
         Competition competition = competitionRepository.findById(competitionDto.getId());
 
@@ -121,21 +125,26 @@ public class CompetitionService {
         if (competitionDto.getCid() != null) {
             competition.setCid(competitionDto.getCid());
         }
-        if (competitionDto.getContents() != null) {
-            competition.setContents(ContentMapper.INSTANCE.toContentList(competitionDto.getContents()));
-        }
         if (competitionDto.getRefComp() != null) {
-
+            competition.setRefComp(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefComp()));
         }
         if (competitionDto.getRefCompCount() != null) {
-
+            competition.setRefCompCount(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompCount()));
         }
         if (competitionDto.getRefCompAge() != null) {
-
+            competition.setRefCompAge(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompAge()));
         }
-        if ()
+        if (competitionDto.getCompetitionContent() != null) {
+            competition.setCompetitionContent(competitionDto.getCompetitionContent());
+        }
+        if (competitionDto.getMinNumOfTeamMem() != -1){
+            competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
+        }
+        if (competitionDto.getMaxNumOfTeamMem() != -1){
+            competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
+        }
 
-        return competitionRepository.save(competition);
+            return competitionRepository.save(competition);
     }
 
 

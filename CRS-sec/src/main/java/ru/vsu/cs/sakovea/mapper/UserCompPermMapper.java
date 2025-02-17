@@ -3,9 +3,8 @@ package ru.vsu.cs.sakovea.mapper;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import ru.vsu.cs.sakovea.api.dto.UserCompPermDto;
-import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
-import ru.vsu.cs.sakovea.models.Content;
+import ru.vsu.cs.sakovea.api.dto.userCompPerms.GetUserCompPermsDto;
+import ru.vsu.cs.sakovea.api.dto.userCompPerms.UserCompPermDto;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
 
 import java.util.List;
@@ -18,6 +17,11 @@ public interface UserCompPermMapper {
     UserCompPermMapper INSTANCE = Mappers.getMapper(UserCompPermMapper.class);
 
     UserCompPermDto toUserCompPermDto(UserCompPerm userCompPerm);
+
+    GetUserCompPermsDto toGetUserCompPermsDtoDto(UserCompPerm userCompPerm);
+
+    @IterableMapping(elementTargetType = UserCompPermDto.class)
+    List<GetUserCompPermsDto> toGetUserCompPermsDtoList(List<UserCompPerm> userCompPermList);
 
     UserCompPermDto toUserCompPermDto(Optional<UserCompPerm> userCompPerm);
 

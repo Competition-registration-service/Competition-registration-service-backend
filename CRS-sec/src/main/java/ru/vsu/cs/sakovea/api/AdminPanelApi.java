@@ -13,6 +13,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionCreateDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
+import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.models.Competition;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
@@ -69,19 +70,21 @@ public interface AdminPanelApi {
             summary = "Создание контента(страниц) мероприятия или соревнование",
             description = "Создает страницу или контент для мероприятия или соревнования"
     )
-    @PostMapping("/competition/content/create")
+    @PostMapping("/competition/{id}/content/create")
     ResponseEntity<?> createCompetitionContent(HttpServletResponse response,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                        @RequestBody ContentDto contentDto);
+                                        @RequestBody RequestContentDto contentDto,
+                                               @PathVariable ("id") int competitionId);
 
     @Operation(
             summary = "Обновление контента(страниц) мероприятия или соревнование",
             description = "Обновляет страницу или контент для мероприятия или соревнования"
     )
-    @PutMapping("/competition/content/update")
+    @PutMapping("/competition/{id}/content/update")
     ResponseEntity<ContentDto> updateCompetitionContent(HttpServletResponse response,
                                                      @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                     @RequestBody ContentDto contentDto);
+                                                     @RequestBody ContentDto contentDto,
+                                                        @PathVariable ("id") int competitionId);
 
     @Operation(
             summary = "Получение списка объявлений",

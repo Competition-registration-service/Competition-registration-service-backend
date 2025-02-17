@@ -8,9 +8,9 @@ import ru.vsu.cs.sakovea.api.dto.*;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.contestant.ContestantDto;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
+import ru.vsu.cs.sakovea.api.dto.userCompPerms.UserCompPermDto;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 

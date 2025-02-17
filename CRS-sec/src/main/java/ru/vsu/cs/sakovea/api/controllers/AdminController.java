@@ -10,6 +10,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionCreateDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
+import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.mapper.ContentMapper;
 import ru.vsu.cs.sakovea.models.Competition;
@@ -40,7 +41,8 @@ public class AdminController implements AdminPanelApi {
     }
 
     @Override
-    public ResponseEntity<Competition> updateEvent(HttpServletResponse response, UserDetailsImpl userDetails, CompetitionDto competitionDto) {
+    public ResponseEntity<Competition> updateEvent(HttpServletResponse response, UserDetailsImpl userDetails,
+                                                   CompetitionDto competitionDto) {
         return ResponseEntity.ok(competitionService.updateEvent(userDetails, competitionDto));
     }
 
@@ -49,23 +51,28 @@ public class AdminController implements AdminPanelApi {
      и минимумом челов в команде пропадают или наоборот их нет и если выбирается командное то появляются"
      **/
     @Override
-    public ResponseEntity<?> createCompetition(HttpServletResponse response, UserDetailsImpl userDetails, CompetitionCreateDto competitionCreateDto, int eventId) {
+    public ResponseEntity<?> createCompetition(HttpServletResponse response, UserDetailsImpl userDetails,
+                                               CompetitionCreateDto competitionCreateDto, int eventId) {
         return ResponseEntity.ok(competitionService.createCompetition(userDetails, competitionCreateDto, eventId));
     }
 
     @Override
-    public ResponseEntity<Competition> updateCompetition(HttpServletResponse response, UserDetailsImpl userDetails, CompetitionDto competitionDto, int eventId) {
-        return ResponseEntity.ok(competitionService.updateCompetition(userDetails, competitionDto, eventId));
+    public ResponseEntity<Competition> updateCompetition(HttpServletResponse response, UserDetailsImpl userDetails,
+                                                         CompetitionDto competitionDto, int eventId) {
+        return ResponseEntity.ok(competitionService.updateCompetition(userDetails, competitionDto));
     }
 
     @Override
-    public ResponseEntity<?> createCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,@Valid ContentDto contentDto) {
-        return ResponseEntity.ok(contentService.createContent(userDetails, contentDto));
+    public ResponseEntity<?> createCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
+                                                       RequestContentDto contentDto, int competitionId) {
+        return ResponseEntity.ok(contentService.createContent(userDetails, contentDto, competitionId));
     }
 
     @Override
-    public ResponseEntity<ContentDto> updateCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,@Valid ContentDto contentDto) {
-        return ResponseEntity.ok(ContentMapper.INSTANCE.toContentDto(contentService.updateContent(userDetails, contentDto)));
+    public ResponseEntity<ContentDto> updateCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
+                                                                ContentDto contentDto, int competitionId) {
+        return ResponseEntity.ok(ContentMapper.INSTANCE.toContentDto(contentService.updateContent(userDetails,
+                contentDto)));
     }
 
     @Override
