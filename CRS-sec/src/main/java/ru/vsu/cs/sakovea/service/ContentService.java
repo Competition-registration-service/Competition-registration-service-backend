@@ -36,8 +36,13 @@ public class ContentService {
     }
 
 
-    public ContentDto getContent(Integer id) {
-        return ContentMapper.INSTANCE.toContentDto(contentRepository.findById(id));
+    public ContentDto getContent(Integer eventId,Integer id) {
+        Content content = contentRepository.findByIdAndCompetition(id, competitionRepository.findById(eventId).get());
+        if (content != null) {
+            System.out.println(ContentMapper.INSTANCE.toContentDto(content));
+            return ContentMapper.INSTANCE.toContentDto(content);
+        }
+        throw new ThrowMyException("Нет сонтента, тело пустое пришло из БД");
     }
 
     public Content createContent(UserDetailsImpl userDetails, RequestContentDto contentDto, int competitionId) {

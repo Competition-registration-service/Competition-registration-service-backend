@@ -21,6 +21,9 @@ public class CompetitionService {
 
     private final RefValueRepository refValueRepository;
 
+    private Integer MAX_NUM_OF_TEAM_MEM = 5;
+    private Integer MIN_NUM_OF_TEAM_MEM = 1;
+
 //    private void forbidAccessForNullUserRole(UserDetailsImpl userDetails) {
 //        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin())) {
 //            return;
@@ -89,11 +92,15 @@ public class CompetitionService {
             competition.setRefCompCount(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompCount()));
             competition.setRefCompAge(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompAge()));
             competition.setCompetitionContent(competitionDto.getCompetitionContent());
-            if (competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() != null
-                    || competitionDto.getMaxNumOfTeamMem() == null && competitionDto.getMinNumOfTeamMem() != null ||
-                    competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() == null) {
+            if (competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() != null){
                 competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
                 competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
+            } else if (competitionDto.getMaxNumOfTeamMem() == null && competitionDto.getMinNumOfTeamMem() != null) {
+                competition.setMaxNumOfTeamMem(MAX_NUM_OF_TEAM_MEM);
+                competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
+            } else if (competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() == null) {
+                competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
+                competition.setMinNumOfTeamMem(MIN_NUM_OF_TEAM_MEM);
             }
             competitionRepository.save(competition);
             Competition event = competitionRepository.findById(eventId);
@@ -155,13 +162,18 @@ public class CompetitionService {
         eventDto.setStartDate(event.getStartDate());
         eventDto.setEndDate(event.getEndDate());
         eventDto.setCid(event.getCid());
-        eventDto.setCompetitions(CompetitionMapper.INSTANCE.toCompetitionDtoList(event.getCompetitions()));
+        eventDto.setCompetitions(CompetitionMapper.INSTANCE.toGetCompetitionDtoList(event.getCompetitions()));
         eventDto.setContents(ContentMapper.INSTANCE.toContentDtoList(event.getContents()));
         return eventDto;
     }
 
-    public GetCompetitionDto getCompetition(Integer id) {
-        return CompetitionMapper.INSTANCE.toGetCompetitionDto(competitionRepository.findById(id).get());
+    public GetCompetitionDto getCompetition(Integer eventId, Integer id) {
+        Competition competition = competitionRepository.findByIdAndParent(eventId, competitionRepository.findById(eventId).get());
+        if (competition != null) {
+            System.out.println(CompetitionMapper.INSTANCE.toGetCompetitionDto(competition));
+            return CompetitionMapper.INSTANCE.toGetCompetitionDto(competition);
+        }
+        throw new ThrowMyException("Тело пришло пустое из БД");
     }
 
     public List<GetCompetitionDto> getAllCompetition(Integer eventId) {

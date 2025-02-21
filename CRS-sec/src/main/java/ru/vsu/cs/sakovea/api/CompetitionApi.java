@@ -31,8 +31,8 @@ public interface CompetitionApi {
             summary = "Получение соревнования",
             description = "Возвращает выбранное соревнование"
     )
-    @GetMapping("/competition/{id}")
-    ResponseEntity<GetCompetitionDto> getCompetition(@PathVariable("id") Integer id);
+    @GetMapping("/{eventId}/competition/{id}")
+    ResponseEntity<GetCompetitionDto> getCompetition(@PathVariable("eventId") Integer eventId, @PathVariable("id") Integer id );
 
     @Operation(
             summary = "Получение списка соревнований",
@@ -50,8 +50,8 @@ public interface CompetitionApi {
             summary = "Получение страниц или контента мероприятия",
             description = "Возвращает страницy или контент данного мероприятия"
     )
-    @GetMapping("/content/{id}")
-    ResponseEntity<ContentDto> getEventContent(@PathVariable("id") Integer id);
+    @GetMapping("/{eventId}/content/{id}")
+    ResponseEntity<ContentDto> getEventContent(@PathVariable("eventId") Integer eventId, @PathVariable("id") Integer id);
 
 
     @Operation(

@@ -13,4 +13,6 @@ public interface CompetitionRepository extends JpaRepository<Competition, Intege
 
     Competition findById(int id);
 
+    Competition findByIdAndParent(int id, Competition parent);
+
 }

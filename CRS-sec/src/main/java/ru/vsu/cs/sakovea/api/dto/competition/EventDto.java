@@ -1,5 +1,6 @@
 package ru.vsu.cs.sakovea.api.dto.competition;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,6 @@ public class EventDto {
     private Timestamp startDate;
     private Timestamp endDate;
     private String cid;
-    private List<CompetitionDto> competitions;
+    private List<GetCompetitionDto> competitions;
     private List<ContentDto> contents;
 }

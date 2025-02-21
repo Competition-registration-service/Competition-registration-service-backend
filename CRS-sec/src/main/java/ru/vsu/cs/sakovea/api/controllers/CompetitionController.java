@@ -27,8 +27,8 @@ public class CompetitionController implements CompetitionApi {
     }
 
     @Override
-    public ResponseEntity<GetCompetitionDto> getCompetition(Integer id) {
-        GetCompetitionDto getCompetitionDto = competitionService.getCompetition(id);
+    public ResponseEntity<GetCompetitionDto> getCompetition(Integer eventId, Integer id) {
+        GetCompetitionDto getCompetitionDto = competitionService.getCompetition(eventId, id);
         return ResponseEntity.ok(getCompetitionDto);
     }
 
@@ -39,8 +39,8 @@ public class CompetitionController implements CompetitionApi {
     }
 
     @Override
-    public ResponseEntity<ContentDto> getEventContent(Integer id) {
-        ContentDto contentDto = contentService.getContent(id);
+    public ResponseEntity<ContentDto> getEventContent(Integer eventId, Integer id) {
+        ContentDto contentDto = contentService.getContent(eventId, id);
         return ResponseEntity.ok(contentDto);
     }
 
