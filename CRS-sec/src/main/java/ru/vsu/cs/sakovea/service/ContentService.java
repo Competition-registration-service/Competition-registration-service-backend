@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
+import ru.vsu.cs.sakovea.api.dto.content.ResponseContentDto;
 import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
 import ru.vsu.cs.sakovea.mapper.CompetitionMapper;
 import ru.vsu.cs.sakovea.mapper.ContentMapper;
@@ -36,11 +37,10 @@ public class ContentService {
     }
 
 
-    public ContentDto getContent(Integer eventId,Integer id) {
+    public ResponseContentDto getContent(Integer eventId, Integer id) {
         Content content = contentRepository.findByIdAndCompetition(id, competitionRepository.findById(eventId).get());
         if (content != null) {
-            System.out.println(ContentMapper.INSTANCE.toContentDto(content));
-            return ContentMapper.INSTANCE.toContentDto(content);
+            return ContentMapper.INSTANCE.toResponseContentDto(content);
         }
         throw new ThrowMyException("Нет сонтента, тело пустое пришло из БД");
     }
@@ -59,6 +59,8 @@ public class ContentService {
             if (competition != null) {
                 competition.getContents().add(content);
                 competitionRepository.save(competition);
+                content.setCompetition(competition);
+                contentRepository.save(content);
             } else throw new ThrowMyException("Мероприятия с таким ID не существует!");
             return content;
         }
@@ -84,7 +86,7 @@ public class ContentService {
         return contentRepository.save(content);
     }
 
-    public List<ContentDto> getCompetitionContents(Integer id) {
-        return ContentMapper.INSTANCE.toContentDtoList(contentRepository.findByCompetitionId(id));
+    public List<ResponseContentDto> getCompetitionContents(Integer id) {
+        return ContentMapper.INSTANCE.toResponseContentDtoList(contentRepository.findByCompetitionId(id));
     }
 }

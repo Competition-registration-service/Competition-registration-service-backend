@@ -14,6 +14,8 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
+import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
+import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueRequestDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.models.Competition;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
@@ -103,5 +105,17 @@ public interface AdminPanelApi {
             @RequestParam(name = "limit", defaultValue = defaultLimit)
             @Min(1) @Max(50)
             Integer limit
+    );
+
+    @Operation(
+            summary = "Изменение роли пользователя на мероприятии",
+            description = "Изменяет роль пользователя на конкретном мероприятии"
+    )
+    @PutMapping("/event/{eventId}/user/{userId}/change-role")
+    ResponseEntity<?> changeUserRoleOnEvent(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable("eventId") int eventId,
+            @PathVariable("userId") int userId,
+            @RequestBody RefValueRequestDto newRoleDto
     );
 }

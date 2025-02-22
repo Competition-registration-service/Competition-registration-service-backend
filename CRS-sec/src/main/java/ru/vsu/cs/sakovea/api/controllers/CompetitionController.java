@@ -8,6 +8,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.EventDto;
 import ru.vsu.cs.sakovea.api.dto.competition.GetCompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
+import ru.vsu.cs.sakovea.api.dto.content.ResponseContentDto;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.service.CompetitionService;
 import ru.vsu.cs.sakovea.service.ContentService;
@@ -39,13 +40,13 @@ public class CompetitionController implements CompetitionApi {
     }
 
     @Override
-    public ResponseEntity<ContentDto> getEventContent(Integer eventId, Integer id) {
-        ContentDto contentDto = contentService.getContent(eventId, id);
+    public ResponseEntity<ResponseContentDto> getEventContent(Integer eventId, Integer id) {
+        ResponseContentDto contentDto = contentService.getContent(eventId, id);
         return ResponseEntity.ok(contentDto);
     }
 
     @Override
-    public ResponseEntity<List<ContentDto>> getEventContents(Integer id) {
+    public ResponseEntity<List<ResponseContentDto>> getEventContents(Integer id) {
         return ResponseEntity.ok(contentService.getCompetitionContents(id));
     }
 }

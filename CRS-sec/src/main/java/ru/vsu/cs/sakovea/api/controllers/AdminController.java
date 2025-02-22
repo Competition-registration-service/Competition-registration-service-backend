@@ -11,6 +11,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
+import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueRequestDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.mapper.ContentMapper;
 import ru.vsu.cs.sakovea.models.Competition;
@@ -79,6 +80,12 @@ public class AdminController implements AdminPanelApi {
     public ResponseEntity<List<UserDto>> getAllUsers(UserDetailsImpl userDetails, Integer offset, Integer limit) {
         List<UserDto> userDtos = userService.getAllUsersPagination(userDetails, offset, limit);
         return ResponseEntity.ok(userDtos);
+    }
+
+    @Override
+    public ResponseEntity<?> changeUserRoleOnEvent(UserDetailsImpl userDetails, int eventId, int userId, RefValueRequestDto newRoleDto) {
+        userService.changeUserRoleOnEvent(userDetails, eventId, userId, newRoleDto);
+        return ResponseEntity.ok("Роль пользователя успешно изменена");
     }
 
 }

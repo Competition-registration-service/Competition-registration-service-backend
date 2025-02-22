@@ -7,16 +7,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueRequestDto;
 import ru.vsu.cs.sakovea.api.dto.registration.ChangePasswordByEmail;
 import ru.vsu.cs.sakovea.api.dto.user.ChangePasswordDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
 import ru.vsu.cs.sakovea.mapper.UserMapper;
-import ru.vsu.cs.sakovea.models.User;
-import ru.vsu.cs.sakovea.models.UserCompPerm;
-import ru.vsu.cs.sakovea.models.UserDetailsImpl;
+import ru.vsu.cs.sakovea.models.*;
 import ru.vsu.cs.sakovea.models.enums.Role;
+import ru.vsu.cs.sakovea.repository.CompetitionRepository;
 import ru.vsu.cs.sakovea.repository.RefValueRepository;
 import ru.vsu.cs.sakovea.repository.UserCompPermsRepository;
 import ru.vsu.cs.sakovea.repository.UserRepository;
@@ -37,6 +37,8 @@ public class UserService implements UserDetailsService {
     private final EmailSenderService emailSenderService;
 
     private final RefValueRepository refValueRepository;
+
+    private final CompetitionRepository competitionRepository;
 
     public Optional<User> getByUsername(String login) {
         return userRepository.findByLogin(login);
@@ -141,5 +143,28 @@ public class UserService implements UserDetailsService {
 
         emailSenderService.sendConfirmationEmail(user.getEmail(), user.getActiveCode());
         return ResponseEntity.ok("Письмо с подтверждением отправлено на почту.");
+    }
+
+    public void changeUserRoleOnEvent(UserDetailsImpl userDetails, int eventId, int userId, RefValueRequestDto newRoleDto) {
+        checkIsUserAdmin(userDetails);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ThrowMyException("Пользователь не найден"));
+
+        Competition competition = competitionRepository.findById(eventId);
+        if (competition == null) {
+            throw new ThrowMyException("Мероприятие не найдено");
+        }
+
+        RefValue newRole = refValueRepository.findById(newRoleDto.getId())
+                .orElseThrow(() -> new ThrowMyException("Роль не найдена"));
+
+        UserCompPerm userCompPerm = userCompPermsRepository.findByUserAndCompetition(user, competition);
+
+        if (userCompPerm == null) {
+            throw new ThrowMyException("Роль пользователя на мероприятии не найдена");
+        }
+        userCompPerm.setRefRole(newRole);
+        userCompPermsRepository.save(userCompPerm);
     }
 }
