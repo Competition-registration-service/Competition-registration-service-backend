@@ -168,7 +168,7 @@ public class CompetitionService {
     }
 
     public GetCompetitionDto getCompetition(Integer eventId, Integer id) {
-        Competition competition = competitionRepository.findByIdAndParent(eventId, competitionRepository.findById(eventId).get());
+        Competition competition = competitionRepository.findByIdAndParent(id, competitionRepository.findById(eventId).get());
         if (competition != null) {
             System.out.println(CompetitionMapper.INSTANCE.toGetCompetitionDto(competition));
             return CompetitionMapper.INSTANCE.toGetCompetitionDto(competition);
