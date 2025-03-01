@@ -22,7 +22,7 @@ public interface UserMapper {
     @IterableMapping(elementTargetType = UserDto.class)
     List<UserDto> toUserDtoList(List<User> users);
 
-    @IterableMapping(elementTargetType = GetUserForAdminDto.class)
+    @IterableMapping(elementTargetType = UserDto.class)
     List<GetUserForAdminDto> toUserForAdminDtoList(List<User> users);
 
     UserDto toUserDto(User user);

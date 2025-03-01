@@ -163,7 +163,7 @@ public class CompetitionService {
         eventDto.setEndDate(event.getEndDate());
         eventDto.setCid(event.getCid());
         eventDto.setCompetitions(CompetitionMapper.INSTANCE.toGetCompetitionDtoList(event.getCompetitions()));
-        eventDto.setContents(ContentMapper.INSTANCE.toContentDtoList(event.getContents()));
+        eventDto.setContents(ContentMapper.INSTANCE.toResponseContentDtoList(event.getContents()));
         return eventDto;
     }
 

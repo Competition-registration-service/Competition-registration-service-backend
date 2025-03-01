@@ -4,7 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.vsu.cs.sakovea.api.dto.contestant.ContestantDto;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
