@@ -14,7 +14,6 @@ import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 @Data
 public class UserCompPermDto {
     private int id;
-    private String userLogin;
     private CompetitionDto competition;
     private RefValueDto refValue;
 }

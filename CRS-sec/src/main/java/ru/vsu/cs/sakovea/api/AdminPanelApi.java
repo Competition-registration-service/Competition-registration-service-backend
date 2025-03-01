@@ -14,6 +14,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
+import ru.vsu.cs.sakovea.api.dto.user.ChangeUserRoleDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserForAdminDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
@@ -114,4 +115,14 @@ public interface AdminPanelApi {
     @GetMapping("/user/{id}")
     ResponseEntity<UserDto> getUserForAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                @PathVariable ("id") int userId);
+
+
+    @Operation(
+            summary = "Получение пользователя",
+            description = "Возвращает информацию о пользователе"
+    )
+    @PutMapping("/user/{id}")
+    ResponseEntity<UserDto> changeUserRole(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @PathVariable ("id") int userId,
+                                           @RequestBody ChangeUserRoleDto changeUserRoleDto);
 }

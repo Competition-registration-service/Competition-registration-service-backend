@@ -11,6 +11,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
+import ru.vsu.cs.sakovea.api.dto.user.ChangeUserRoleDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserForAdminDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
@@ -86,6 +87,11 @@ public class AdminController implements AdminPanelApi {
     @Override
     public ResponseEntity<UserDto> getUserForAdmin(UserDetailsImpl userDetails, int userId) {
         return ResponseEntity.ok(userService.getUserForAdmin(userDetails, userId));
+    }
+
+    @Override
+    public ResponseEntity<UserDto> changeUserRole(UserDetailsImpl userDetails, int userId, ChangeUserRoleDto userRoleDto) {
+        return ResponseEntity.ok(userService.changeUserRole(userDetails, userId, userRoleDto));
     }
 
 }

@@ -8,16 +8,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.registration.ChangePasswordByEmail;
-import ru.vsu.cs.sakovea.api.dto.user.ChangePasswordDto;
-import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
-import ru.vsu.cs.sakovea.api.dto.user.GetUserForAdminDto;
-import ru.vsu.cs.sakovea.api.dto.user.UserDto;
+import ru.vsu.cs.sakovea.api.dto.user.*;
 import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
 import ru.vsu.cs.sakovea.mapper.UserMapper;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.models.enums.Role;
+import ru.vsu.cs.sakovea.repository.CompetitionRepository;
 import ru.vsu.cs.sakovea.repository.RefValueRepository;
 import ru.vsu.cs.sakovea.repository.UserCompPermsRepository;
 import ru.vsu.cs.sakovea.repository.UserRepository;
@@ -38,6 +36,7 @@ public class UserService implements UserDetailsService {
     private final EmailSenderService emailSenderService;
 
     private final RefValueRepository refValueRepository;
+    private final CompetitionRepository competitionRepository;
 
     public Optional<User> getByUsername(String login) {
         return userRepository.findByLogin(login);
@@ -153,5 +152,28 @@ public class UserService implements UserDetailsService {
             return UserMapper.INSTANCE.toUserDto(user);
         }
         throw new ThrowMyException("Такого пользователя нет");
+    }
+
+    public UserDto changeUserRole(UserDetailsImpl userDetails, int userId, ChangeUserRoleDto changeUserRoleDto) {
+        checkIsUserAdmin(userDetails);
+        User user = userRepository.findById(userId);
+        UserCompPerm userRole = new UserCompPerm();
+        if (user != null) {
+            if (user.getRoles().getLast().getCompetition() ==
+                    competitionRepository.findById(changeUserRoleDto.getCompetitionId())){
+                user.getRoles().getLast().setRefRole(refValueRepository.findRefValueByValueCid(changeUserRoleDto.getNewRole()));
+                userRepository.save(user);
+                return UserMapper.INSTANCE.toUserDto(user);
+            } else {
+                userRole.setRefRole(refValueRepository.findRefValueByValueCid(changeUserRoleDto.getNewRole()));
+                userRole.setCompetition(competitionRepository.findById(changeUserRoleDto.getCompetitionId()));
+                userRole.setUser(user);
+                userCompPermsRepository.save(userRole);
+                user.getRoles().add(userRole);
+                userRepository.save(user);
+                return UserMapper.INSTANCE.toUserDto(user);
+            }
+        }
+        throw new ThrowMyException("Такого пользователя нет!");
     }
 }
