@@ -14,6 +14,8 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
+import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
+import ru.vsu.cs.sakovea.api.dto.user.GetUserForAdminDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.models.Competition;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
@@ -87,11 +89,11 @@ public interface AdminPanelApi {
                                                         @PathVariable ("id") int competitionId);
 
     @Operation(
-            summary = "Получение списка объявлений",
-            description = "Возвращает список объявлений учебной организации (с пагинацией через query-параметры)"
+            summary = "Получение списка пользователей",
+            description = "Возвращает список пользователей (с пагинацией через query-параметры)"
     )
     @GetMapping("/users")
-    ResponseEntity<List<UserDto>> getAllUsers(
+    ResponseEntity<List<GetUserForAdminDto>> getAllUsers(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
 
             @Schema(description = "Номер страницы для пагинации", minimum = "0", defaultValue = defaultOffset)
@@ -104,4 +106,12 @@ public interface AdminPanelApi {
             @Min(1) @Max(50)
             Integer limit
     );
+
+    @Operation(
+            summary = "Получение пользователя",
+            description = "Возвращает информацию о пользователе"
+    )
+    @GetMapping("/user/{id}")
+    ResponseEntity<UserDto> getUserForAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                               @PathVariable ("id") int userId);
 }

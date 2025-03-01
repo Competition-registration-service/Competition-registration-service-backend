@@ -11,6 +11,8 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
+import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
+import ru.vsu.cs.sakovea.api.dto.user.GetUserForAdminDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.mapper.ContentMapper;
 import ru.vsu.cs.sakovea.models.Competition;
@@ -76,9 +78,14 @@ public class AdminController implements AdminPanelApi {
     }
 
     @Override
-    public ResponseEntity<List<UserDto>> getAllUsers(UserDetailsImpl userDetails, Integer offset, Integer limit) {
-        List<UserDto> userDtos = userService.getAllUsersPagination(userDetails, offset, limit);
+    public ResponseEntity<List<GetUserForAdminDto>> getAllUsers(UserDetailsImpl userDetails, Integer offset, Integer limit) {
+        List<GetUserForAdminDto> userDtos = userService.getAllUsersPagination(userDetails, offset, limit);
         return ResponseEntity.ok(userDtos);
+    }
+
+    @Override
+    public ResponseEntity<UserDto> getUserForAdmin(UserDetailsImpl userDetails, int userId) {
+        return ResponseEntity.ok(userService.getUserForAdmin(userDetails, userId));
     }
 
 }

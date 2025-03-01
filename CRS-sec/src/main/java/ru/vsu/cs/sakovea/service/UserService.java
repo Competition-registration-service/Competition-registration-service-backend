@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.registration.ChangePasswordByEmail;
 import ru.vsu.cs.sakovea.api.dto.user.ChangePasswordDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
+import ru.vsu.cs.sakovea.api.dto.user.GetUserForAdminDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
 import ru.vsu.cs.sakovea.mapper.UserMapper;
@@ -127,10 +128,12 @@ public class UserService implements UserDetailsService {
                 "не существует, введите почту на которую регистрировались!");
     }
 
-    public List<UserDto> getAllUsersPagination(UserDetailsImpl userDetails, Integer offset, Integer limit) {
+    public List<GetUserForAdminDto> getAllUsersPagination(UserDetailsImpl userDetails, Integer offset, Integer limit) {
         checkIsUserAdmin(userDetails);
-        return UserMapper.INSTANCE.toUserDtoList(userRepository.findAll(PageRequest.of(offset, limit)).getContent());
+        return UserMapper.INSTANCE.toUserForAdminDtoList(userRepository.findAll(PageRequest.of(offset, limit)).getContent());
     }
+
+
 
     public ResponseEntity<?> changePassword(UserDetailsImpl userDetails) {
         User user = userRepository.findUserByLogin(userDetails.getUser().getLogin());
@@ -141,5 +144,14 @@ public class UserService implements UserDetailsService {
 
         emailSenderService.sendConfirmationEmail(user.getEmail(), user.getActiveCode());
         return ResponseEntity.ok("Письмо с подтверждением отправлено на почту.");
+    }
+
+    public UserDto getUserForAdmin(UserDetailsImpl userDetails, int userId) {
+        checkIsUserAdmin(userDetails);
+        User user = userRepository.findById(userId);
+        if (user != null) {
+            return UserMapper.INSTANCE.toUserDto(user);
+        }
+        throw new ThrowMyException("Такого пользователя нет");
     }
 }
