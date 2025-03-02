@@ -37,7 +37,7 @@ public interface UserApi {
             description = "Обновляет пароль пользователя"
     )
     @PutMapping("/profile/update-password")
-    ResponseEntity<?> updateUserPassword(@RequestBody ChangePasswordDto changePasswordDto, @RequestParam("token") String token);
+    ResponseEntity<?> updateUserPassword(@RequestBody ChangePasswordDto changePasswordDto);
 
     @Operation(
             summary = "Отправка на почту ссылки для подтверждения почты и изменения пароля",

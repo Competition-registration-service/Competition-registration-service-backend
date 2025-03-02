@@ -49,7 +49,7 @@ public class AuthController implements AuthApi {
     }
 
     @Override
-    public ResponseEntity<?> updateUserPassword(ChangePasswordDto changePasswordDto, String token) {
-        return ResponseEntity.ok(userService.updateUserPassword(changePasswordDto, token));
+    public ResponseEntity<?> updateUserPassword(ChangePasswordDto changePasswordDto) {
+        return ResponseEntity.ok(userService.updateUserPassword(changePasswordDto));
     }
 }

@@ -113,13 +113,10 @@ public class UserService implements UserDetailsService {
         throw new ThrowMyException("Такого пользователя нет");
     }
 
-    public ResponseEntity<?> updateUserPassword(ChangePasswordDto changePasswordDto, String token) {
-        User user = userRepository.findUserByActiveCode(token);
-        if (user.getActiveCode() != null) {
-            user.setActiveCode(null);
-
+    public ResponseEntity<?> updateUserPassword(ChangePasswordDto changePasswordDto) {
+        User user = userRepository.findUserByEmail(changePasswordDto.getEmail());
+        if (user != null) {
             user.setPassword(changePasswordDto.getPassword());
-
             userRepository.save(user);
             return ResponseEntity.ok("Пароль успешно изменен");
         }
