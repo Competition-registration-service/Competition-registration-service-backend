@@ -43,8 +43,8 @@ public class UserService implements UserDetailsService {
     }
 
     private void checkIsUserAdmin(UserDetailsImpl userDetails) {
-        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || userDetails.getUserCompPerm().getRefRole()
-                .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid())) {
+        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || (userDetails.getUser().getRoles().getFirst().
+                getRefRole().getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid()))) {
             return;
         }
         throw new ThrowMyException("Доступ запрещён");
@@ -55,14 +55,14 @@ public class UserService implements UserDetailsService {
         User user = getByUsername(login).orElseThrow(() -> new UsernameNotFoundException(
                 String.format("Пользователь '%s' не найден", login)
         ));
-        System.out.println(user.getLogin());
         UserCompPerm userRole = user.getRoles().getLast();
-        System.out.println(userRole.getRefRole().getValueCid());
         return new UserDetailsImpl(user, userRole);
     }
 
     public void saveUserRole(UserCompPerm userCompPerm) {
         if (userCompPerm != null) {
+            userCompPerm.getUser().getRoles().add(userCompPerm);
+            userRepository.save(userCompPerm.getUser());
             userCompPermsRepository.save(userCompPerm);
         }
     }

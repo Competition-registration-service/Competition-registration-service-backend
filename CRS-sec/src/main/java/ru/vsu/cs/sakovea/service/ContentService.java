@@ -29,8 +29,8 @@ public class ContentService {
     private final RefValueRepository refValueRepository;
 
     private void checkIsUserAdmin(UserDetailsImpl userDetails) {
-        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || userDetails.getUserCompPerm().getRefRole()
-                .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid())) {
+        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || (userDetails.getUser().getRoles().getFirst().
+                getRefRole().getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid()))) {
             return;
         }
         throw new ThrowMyException("Доступ запрещён");

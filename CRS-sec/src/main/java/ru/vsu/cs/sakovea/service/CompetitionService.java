@@ -10,6 +10,7 @@ import ru.vsu.cs.sakovea.models.Competition;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.repository.CompetitionRepository;
 import ru.vsu.cs.sakovea.repository.RefValueRepository;
+import ru.vsu.cs.sakovea.repository.UserCompPermsRepository;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class CompetitionService {
 
     private Integer MAX_NUM_OF_TEAM_MEM = 5;
     private Integer MIN_NUM_OF_TEAM_MEM = 1;
+    private final UserCompPermsRepository userCompPermsRepository;
 
 //    private void forbidAccessForNullUserRole(UserDetailsImpl userDetails) {
 //        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin())) {
@@ -36,18 +38,18 @@ public class CompetitionService {
 //    }
 
     private void checkIsUserAdmin(UserDetailsImpl userDetails) {
-        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || userDetails.getUserCompPerm().getRefRole()
-                .getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid())) {
+        if (Boolean.TRUE.equals(userDetails.getUser().isAdmin()) || (userDetails.getUser().getRoles().getFirst().
+                getRefRole().getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid()))) {
             return;
         }
         throw new ThrowMyException("Доступ запрещён");
     }
 
     public Competition createEvent(UserDetailsImpl userDetails, CreateEventDto eventDto) {
-        checkIsUserAdmin(userDetails);
         Competition competition = new Competition();
-
         if (eventDto != null) {
+            checkIsUserAdmin(userDetails);
+            System.out.println(eventDto.getId());
             competition.setName(eventDto.getName());
             competition.setStartDate(eventDto.getStartDate());
             competition.setEndDate(eventDto.getEndDate());

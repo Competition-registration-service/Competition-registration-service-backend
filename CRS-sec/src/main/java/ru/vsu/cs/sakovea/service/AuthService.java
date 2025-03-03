@@ -13,6 +13,7 @@ import ru.vsu.cs.sakovea.api.dto.registration.JWTRequestDto;
 import ru.vsu.cs.sakovea.api.dto.registration.JWTResponseDto;
 import ru.vsu.cs.sakovea.api.dto.registration.RegistrationDto;
 import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
+import ru.vsu.cs.sakovea.models.RefValue;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
@@ -76,9 +77,7 @@ public class AuthService {
 
             userCompPerm.setUser(user);
             userCompPerm.setRefRole(refValueRepository.findRefValueByValueCid(Role.USER.toString()));
-            System.out.println(Role.USER.toString() + " " + "wqerw");
             compPermsRepository.save(userCompPerm);
-            System.out.println(refValueRepository.findRefValueByValueCid(Role.USER.toString()).getShortValue());
             roles.add(userCompPerm);
 
             user.setRoles(roles);
@@ -95,9 +94,6 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid login data");
         }
         User user = userRepository.findUserByLogin(jwtRequestDto.getLogin());
-        System.out.println(user.getEmail());
-        System.out.println(user.getPassword());
-        System.out.println(user.getName());
         if (user.getActiveCode() == null){
             try {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -106,12 +102,14 @@ public class AuthService {
                 ));
 
                 UserDetailsImpl userDetails = userService.loadUserByUsername(jwtRequestDto.getLogin());
+                for (UserCompPerm r : userDetails.getUser().getRoles()){
+                    System.out.println(r.getRefRole().getValueCid());
+                }
+                System.out.println("Последняя роль = " + userDetails.getUser().getRoles().getFirst().getRefRole().getValueCid());
                 log.info("User authenticated: {}", userDetails.getUsername());
 
                 String jwt = jwtTokenService.generateToken(userDetails);
                 log.debug("JWT token generated: {}", jwt);
-
-                System.out.println(jwt);
 
                 return new JWTResponseDto(jwt);
             } catch (Exception e) {

@@ -9,4 +9,6 @@ import ru.vsu.cs.sakovea.models.UserCompPerm;
 @Repository
 public interface UserCompPermsRepository extends JpaRepository<UserCompPerm, Integer> {
     UserCompPerm findByUserAndCompetition(User user, Competition competition);
+
+    UserCompPerm findByUserId(int id);
 }

@@ -54,8 +54,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (login != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetailsImpl userDetails = userService.loadUserByUsername(login);
-            System.out.println(userDetails.getUser().getEmail());
-            System.out.println(userDetails.getUser().getRoles().getLast().getRefRole().getValueCid());
             if (jwtTokenService.validateToken(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
@@ -63,8 +61,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
-                System.out.println(userDetails.getUserCompPerm().getRefRole().getValueCid());
-                userService.saveUserRole(userDetails.getUserCompPerm());
+                userService.saveUserRole(userDetails.getUser().getRoles().getFirst());
             }
         }
         filterChain.doFilter(request, response);

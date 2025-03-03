@@ -25,7 +25,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userCompPerm.getRefRole().getValueCid());
+        String role = String.valueOf(Role.USER);
+        if (userCompPerm != null) {
+            user.getRoles().add(userCompPerm);
+            role = userCompPerm.getRefRole().getValueCid();
+        }
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
         return Collections.singletonList(authority);
     }
 

@@ -8,5 +8,5 @@ import ru.vsu.cs.sakovea.models.UserCompPerm;
 @Repository
 public interface RefValueRepository  extends JpaRepository<RefValue, Integer> {
 
-    RefValue findRefValueByValueCid(String shortValue);
+    RefValue findRefValueByValueCid(String valueCid);
 }
