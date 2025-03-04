@@ -1,10 +1,14 @@
-package ru.vsu.cs.sakovea.api.dto;
+package ru.vsu.cs.sakovea.api.dto.refvalue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.vsu.cs.sakovea.models.*;
+import ru.vsu.cs.sakovea.api.dto.*;
+import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
+import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
+import ru.vsu.cs.sakovea.api.dto.userCompPerms.UserCompPermDto;
+import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 
 import java.util.List;
 
@@ -15,7 +19,7 @@ import java.util.List;
 public class RefValueDto {
 
     private int id;
-    private int domainCid;
+    private String domainCid;
     private String valueCid;
     private String shortValue;
     private String longValue;

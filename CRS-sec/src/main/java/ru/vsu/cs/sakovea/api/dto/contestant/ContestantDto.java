@@ -1,18 +1,15 @@
-package ru.vsu.cs.sakovea.api.dto;
+package ru.vsu.cs.sakovea.api.dto.contestant;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.vsu.cs.sakovea.models.Competition;
-import ru.vsu.cs.sakovea.models.FieldValue;
-import ru.vsu.cs.sakovea.models.Team;
-import ru.vsu.cs.sakovea.models.User;
+import ru.vsu.cs.sakovea.api.dto.FieldValueDto;
+import ru.vsu.cs.sakovea.api.dto.TeamDto;
+import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
+import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -31,8 +28,8 @@ public class ContestantDto {
     private String email;
     private String vk;
     private String telegram;
-    private Date createDate;
-    private Date changeDate;
+    private Timestamp createDate;
+    private Timestamp changeDate;
     private boolean isTeamCreator;
     private UserDto user;
     private CompetitionDto competition;

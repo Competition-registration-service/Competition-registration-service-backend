@@ -1,14 +1,11 @@
 package ru.vsu.cs.sakovea.api.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.vsu.cs.sakovea.models.Competition;
-import ru.vsu.cs.sakovea.models.RefValue;
+import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
+import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
 
 import java.util.List;
 

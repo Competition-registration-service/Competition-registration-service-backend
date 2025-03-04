@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -29,10 +30,10 @@ public class Team {
     private String  accessCode;
 
     @Column(name = "create_date")
-    private Date createDate;
+    private Timestamp createDate;
 
     @Column(name = "change_date")
-    private Date changeDate;
+    private Timestamp changeDate;
 
     @OneToMany(mappedBy = "team")
     private List<Contestant> contestants;

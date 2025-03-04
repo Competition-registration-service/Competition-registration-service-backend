@@ -46,6 +46,8 @@ public class JwtTokenService {
         claims.put("surname", user.getSurname());
         claims.put("thirdname", user.getThirdname());
         claims.put("login", user.getLogin());
+        claims.put("isAdmin", user.isAdmin());
+        claims.put("role", user.getRoles().getFirst().getRefRole().getValueCid());
         return claims;
     }
 

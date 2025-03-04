@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.vsu.cs.sakovea.models.enums.Role;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -58,10 +59,10 @@ public class User {
     private String telegram;
 
     @Column(name = "create_date")
-    private Date createDate;
+    private Timestamp createDate;
 
     @Column(name = "change_date")
-    private Date changeDate;
+    private Timestamp changeDate;
 
     @Column(name = "activation_code")
     private String activeCode;

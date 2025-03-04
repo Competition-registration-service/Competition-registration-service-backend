@@ -1,0 +1,128 @@
+package ru.vsu.cs.sakovea.api;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import ru.vsu.cs.sakovea.api.dto.competition.CompetitionCreateDto;
+import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
+import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
+import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
+import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
+import ru.vsu.cs.sakovea.api.dto.user.ChangeUserRoleDto;
+import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
+import ru.vsu.cs.sakovea.api.dto.user.GetUserForAdminDto;
+import ru.vsu.cs.sakovea.api.dto.user.UserDto;
+import ru.vsu.cs.sakovea.models.Competition;
+import ru.vsu.cs.sakovea.models.UserDetailsImpl;
+
+import java.util.List;
+
+
+@RequestMapping("/admin-panel")
+@Tag(name = "Контроллер админ-панели", description = "Управление пользователями и соревнованиями")
+public interface AdminPanelApi {
+
+    String defaultOffset = "0";
+    String defaultLimit = "25";
+
+    @Operation(
+            summary = "Создание мероприятия",
+            description = "Создает мероприятие"
+    )
+    @PostMapping("/event/create")
+    ResponseEntity<?> createEvent(HttpServletResponse response,
+                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                       @RequestBody CreateEventDto eventDto);
+
+    @Operation(
+            summary = "Обновление мероприятия",
+            description = "Обновляет информацию мероприятия"
+    )
+    @PutMapping("/event/update")
+    ResponseEntity<Competition> updateEvent(HttpServletResponse response,
+                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                       @RequestBody CompetitionDto competitionDto);
+
+    @Operation(
+            summary = "Создание соревнования",
+            description = "Создает соревнование"
+    )
+    @PostMapping("/event/{id}/create-competition")
+    ResponseEntity<?> createCompetition(HttpServletResponse response,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                        @RequestBody CompetitionCreateDto competitionCreateDto,
+                                        @PathVariable ("id") int eventId);
+
+    @Operation(
+            summary = "Обновление соревнования",
+            description = "Обновляет информацию соревнования"
+    )
+    @PutMapping("/event/{id}/update-competition")
+    ResponseEntity<Competition> updateCompetition(HttpServletResponse response,
+                                                     @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                     @RequestBody CompetitionDto competitionDto,
+                                                     @PathVariable ("id") int eventId);
+
+    @Operation(
+            summary = "Создание контента(страниц) мероприятия или соревнование",
+            description = "Создает страницу или контент для мероприятия или соревнования"
+    )
+    @PostMapping("/competition/{id}/content/create")
+    ResponseEntity<?> createCompetitionContent(HttpServletResponse response,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                        @RequestBody RequestContentDto contentDto,
+                                               @PathVariable ("id") int competitionId);
+
+    @Operation(
+            summary = "Обновление контента(страниц) мероприятия или соревнование",
+            description = "Обновляет страницу или контент для мероприятия или соревнования"
+    )
+    @PutMapping("/competition/{id}/content/update")
+    ResponseEntity<ContentDto> updateCompetitionContent(HttpServletResponse response,
+                                                     @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                     @RequestBody ContentDto contentDto,
+                                                        @PathVariable ("id") int competitionId);
+
+    @Operation(
+            summary = "Получение списка пользователей",
+            description = "Возвращает список пользователей (с пагинацией через query-параметры)"
+    )
+    @GetMapping("/users")
+    ResponseEntity<List<GetUserForAdminDto>> getAllUsers(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+
+            @Schema(description = "Номер страницы для пагинации", minimum = "0", defaultValue = defaultOffset)
+            @RequestParam(name = "offset", defaultValue = defaultOffset)
+            @Min(0)
+            Integer offset,
+
+            @Schema(description = "Количество пользователей на странице для пагинации", minimum = "1", maximum = "50", defaultValue = defaultLimit)
+            @RequestParam(name = "limit", defaultValue = defaultLimit)
+            @Min(1) @Max(50)
+            Integer limit
+    );
+
+    @Operation(
+            summary = "Получение пользователя",
+            description = "Возвращает информацию о пользователе"
+    )
+    @GetMapping("/user/{id}")
+    ResponseEntity<UserDto> getUserForAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                               @PathVariable ("id") int userId);
+
+
+    @Operation(
+            summary = "Получение пользователя",
+            description = "Возвращает информацию о пользователе"
+    )
+    @PutMapping("/user/{id}")
+    ResponseEntity<UserDto> changeUserRole(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @PathVariable ("id") int userId,
+                                           @RequestBody ChangeUserRoleDto changeUserRoleDto);
+}

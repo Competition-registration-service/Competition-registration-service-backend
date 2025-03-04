@@ -2,30 +2,26 @@ package ru.vsu.cs.sakovea.api;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.cs.sakovea.api.dto.ChangePasswordDto;
-import ru.vsu.cs.sakovea.api.dto.UserDto;
+import ru.vsu.cs.sakovea.api.dto.user.ChangePasswordDto;
+import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
+import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 
 @RequestMapping("/user")
+@Tag(name = "Контроллер Пользователя", description = "Управление пользователем")
 public interface UserApi {
-
-//    @Operation(
-//            summary = "Получение пользователя",
-//            description = "Возвращает информацию о пользователе"
-//    )
-//    @GetMapping("/{id}")
-//    ResponseEntity<UserDto> getUser(@PathVariable("id") Integer id);
 
     @Operation(
             summary = "Получение пользователя",
             description = "Возвращает информацию о пользователе"
     )
     @GetMapping("/profile")
-    ResponseEntity<UserDto> getUser(@AuthenticationPrincipal UserDetailsImpl userDetails);
+    ResponseEntity<GetUserDto> getUser(@AuthenticationPrincipal UserDetailsImpl userDetails);
 
     @Operation(
             summary = "Обновление пользователя",
@@ -41,7 +37,13 @@ public interface UserApi {
             description = "Обновляет пароль пользователя"
     )
     @PutMapping("/profile/update-password")
-    ResponseEntity<UserDto> updateUserPassword(HttpServletResponse response,
-                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                       @RequestBody UserDto changePasswordDto);
+    ResponseEntity<?> updateUserPassword(@RequestBody ChangePasswordDto changePasswordDto);
+
+    @Operation(
+            summary = "Отправка на почту ссылки для подтверждения почты и изменения пароля",
+            description = "Отправляет на почту ссылку для подтверждения почты и изменения пароля"
+    )
+    @PostMapping("/profile")
+    ResponseEntity<?> changePassword(@AuthenticationPrincipal UserDetailsImpl userDetails);
+
 }

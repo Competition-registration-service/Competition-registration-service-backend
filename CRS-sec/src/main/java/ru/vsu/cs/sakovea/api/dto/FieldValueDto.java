@@ -1,13 +1,10 @@
 package ru.vsu.cs.sakovea.api.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.vsu.cs.sakovea.models.Contestant;
-import ru.vsu.cs.sakovea.models.Field;
-import ru.vsu.cs.sakovea.models.Team;
+import ru.vsu.cs.sakovea.api.dto.contestant.ContestantDto;
 
 @AllArgsConstructor
 @NoArgsConstructor

@@ -8,9 +8,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import ru.vsu.cs.sakovea.api.dto.JWTRequestDto;
-import ru.vsu.cs.sakovea.api.dto.JWTResponseDto;
-import ru.vsu.cs.sakovea.api.dto.RegistrationDto;
+import ru.vsu.cs.sakovea.api.dto.registration.ChangePasswordByEmail;
+import ru.vsu.cs.sakovea.api.dto.registration.JWTRequestDto;
+import ru.vsu.cs.sakovea.api.dto.registration.JWTResponseDto;
+import ru.vsu.cs.sakovea.api.dto.registration.RegistrationDto;
+import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
+import ru.vsu.cs.sakovea.models.RefValue;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
@@ -75,7 +78,6 @@ public class AuthService {
             userCompPerm.setUser(user);
             userCompPerm.setRefRole(refValueRepository.findRefValueByValueCid(Role.USER.toString()));
             compPermsRepository.save(userCompPerm);
-            System.out.println(refValueRepository.findRefValueByValueCid(Role.USER.toString()).getShortValue());
             roles.add(userCompPerm);
 
             user.setRoles(roles);
@@ -92,9 +94,6 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid login data");
         }
         User user = userRepository.findUserByLogin(jwtRequestDto.getLogin());
-        System.out.println(user.getEmail());
-        System.out.println(user.getPassword());
-        System.out.println(user.getName());
         if (user.getActiveCode() == null){
             try {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -103,12 +102,14 @@ public class AuthService {
                 ));
 
                 UserDetailsImpl userDetails = userService.loadUserByUsername(jwtRequestDto.getLogin());
+                for (UserCompPerm r : userDetails.getUser().getRoles()){
+                    System.out.println(r.getRefRole().getValueCid());
+                }
+                System.out.println("Последняя роль = " + userDetails.getUser().getRoles().getFirst().getRefRole().getValueCid());
                 log.info("User authenticated: {}", userDetails.getUsername());
 
                 String jwt = jwtTokenService.generateToken(userDetails);
                 log.debug("JWT token generated: {}", jwt);
-
-                System.out.println(jwt);
 
                 return new JWTResponseDto(jwt);
             } catch (Exception e) {
@@ -116,7 +117,18 @@ public class AuthService {
                 throw new RuntimeException("Error during user authentication", e);
             }
         }
-        return null;
+        throw new ThrowMyException("Пользователь не подтвердил почту");
+    }
+
+    public ResponseEntity<?> changePassword(ChangePasswordByEmail email) {
+        User user = userRepository.findUserByEmail(email.getEmail());
+
+        user.setActiveCode(UUID.randomUUID().toString());
+
+        userRepository.save(user);
+
+        emailSenderService.sendConfirmationEmail(user.getEmail(), user.getActiveCode());
+        return ResponseEntity.ok("Письмо с подтверждением отправлено на почту.");
     }
 
     private boolean isValidRegistrationData(RegistrationDto request) {

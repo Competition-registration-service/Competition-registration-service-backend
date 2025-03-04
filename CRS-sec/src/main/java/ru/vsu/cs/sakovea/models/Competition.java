@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -32,48 +33,51 @@ public class Competition {
     private int minNumOfTeamMem;
 
     @Column(name = "start_date")
-    private Date startDate;
+    private Timestamp startDate;
 
     @Column(name = "end_date")
-    private Date endDate;
+    private Timestamp endDate;
 
     @Column(name = "cid")
     private String cid;
 
-    @ManyToOne
+    @Column(name = "competition_content")
+    private String competitionContent;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     private Competition parent;
 
     @OneToMany(mappedBy = "parent")
     private List<Competition> competitions;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ref_comp_id")
     private RefValue refComp;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ref_comp_count_id")
     private RefValue refCompCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ref_comp_age_id")
     private RefValue refCompAge;
 
-    @OneToMany(mappedBy = "competition")
+    @OneToMany(mappedBy = "competition", fetch = FetchType.LAZY)
     private List<Content> contents;
 
-    @OneToMany(mappedBy = "competition")
+    @OneToMany(mappedBy = "competition", fetch = FetchType.LAZY)
     private List<Contestant> contestants;
 
-    @OneToMany(mappedBy = "competition")
+    @OneToMany(mappedBy = "competition",fetch = FetchType.LAZY)
     private List<Field> fields;
 
-    @OneToMany(mappedBy = "competition")
+    @OneToMany(mappedBy = "competition", fetch = FetchType.LAZY)
     private List<File> files;
 
-    @OneToMany(mappedBy = "competition")
+    @OneToMany(mappedBy = "competition",fetch = FetchType.LAZY)
     private List<Team> teams;
 
-    @OneToMany(mappedBy = "competition")
+    @OneToMany(mappedBy = "competition",fetch = FetchType.LAZY)
     private List<UserCompPerm> roles;
 }

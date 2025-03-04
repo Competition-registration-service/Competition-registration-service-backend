@@ -20,7 +20,7 @@ public class Content {
     private int id;
 
     @Column(name = "content")
-    private String content;
+    private String feelingContent;
 
     @ManyToOne
     @JoinColumn(name = "competition_id", referencedColumnName = "id")

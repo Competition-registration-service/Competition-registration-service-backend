@@ -1,4 +1,4 @@
-package ru.vsu.cs.sakovea.api.dto;
+package ru.vsu.cs.sakovea.api.dto.user;
 
 
 import lombok.*;
@@ -9,6 +9,8 @@ import lombok.*;
 @Data
 @ToString
 public class ChangePasswordDto {
+
+    private String email;
 
     private String password;
 

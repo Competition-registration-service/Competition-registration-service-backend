@@ -1,18 +1,15 @@
-package ru.vsu.cs.sakovea.api.dto;
+package ru.vsu.cs.sakovea.api.dto.user;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.vsu.cs.sakovea.models.Contestant;
-import ru.vsu.cs.sakovea.models.RefValue;
+import ru.vsu.cs.sakovea.api.dto.contestant.ContestantDto;
+import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
+import ru.vsu.cs.sakovea.api.dto.userCompPerms.UserCompPermDto;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 @AllArgsConstructor
@@ -28,18 +25,15 @@ public class UserDto {
     private String birthDate;
     private String gender;
     private String login;
-    private String password;
+    private String password; // todo пароль захеширован
     private String phone;
     private String email;
     private String vk;
     private String telegram;
-    private Date createDate;
-    private Date changeDate;
-    private String activeCode;
-    private boolean isAdmin;
-    private List<ContestantDto> contestants;
+    private Timestamp createDate;
+    private Timestamp changeDate;
     private RefValueDto refEducation;
     private RefValueDto refCourse;
     private RefValueDto refRegion;
-    private List<UserCompPermDto> roles;
+    private List<UserCompPermDto> rolesValueCid;
 }

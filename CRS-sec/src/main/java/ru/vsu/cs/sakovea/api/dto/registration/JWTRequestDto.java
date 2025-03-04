@@ -1,4 +1,4 @@
-package ru.vsu.cs.sakovea.api.dto;
+package ru.vsu.cs.sakovea.api.dto.registration;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

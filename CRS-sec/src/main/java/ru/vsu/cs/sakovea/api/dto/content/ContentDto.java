@@ -1,11 +1,11 @@
-package ru.vsu.cs.sakovea.api.dto;
+package ru.vsu.cs.sakovea.api.dto.content;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.vsu.cs.sakovea.models.Competition;
-import ru.vsu.cs.sakovea.models.RefValue;
+import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
+import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,7 +14,7 @@ import ru.vsu.cs.sakovea.models.RefValue;
 public class ContentDto {
 
     private int id;
-    private String content;
+    private String feelingContent;
     private CompetitionDto competition;
     private RefValueDto refPage;
     private RefValueDto refFormat;
