@@ -47,6 +47,15 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid registration data");
         }
 
+        if (!isLoginUnique(registrationDto.getLogin())) {
+            throw new IllegalArgumentException("Логин уже занят");
+        }
+
+        if (!isEmailUnique(registrationDto.getEmail())) {
+            throw new IllegalArgumentException("Почта уже занята");
+        }
+
+
         User user = new User();
         user.setName(registrationDto.getName());
         user.setSurname(registrationDto.getSurname());
@@ -141,5 +150,13 @@ public class AuthService {
     private boolean isValidLoginData(JWTRequestDto request) {
         return StringUtils.hasText(request.getLogin())
                 && StringUtils.hasText(request.getPassword());
+    }
+
+    public boolean isLoginUnique(String login) {
+        return userRepository.findByLogin(login).isEmpty();
+    }
+
+    public boolean isEmailUnique(String email) {
+        return userRepository.findUserByEmail(email) == null;
     }
 }
