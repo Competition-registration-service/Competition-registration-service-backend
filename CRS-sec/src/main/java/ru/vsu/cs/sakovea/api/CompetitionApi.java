@@ -18,7 +18,7 @@ import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import java.util.List;
 
 @RequestMapping("/event")
-@Tag(name = "Контроллер соревнований и мероприятий", description = "Управление мероприятиями и соревнованиями")
+@Tag(name = "Контроллер соревнований и мероприятий ✅", description = "Управление мероприятиями и соревнованиями")
 public interface CompetitionApi {
 
     @Operation(

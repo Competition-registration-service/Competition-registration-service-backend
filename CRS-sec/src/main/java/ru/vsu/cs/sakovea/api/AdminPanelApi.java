@@ -25,7 +25,7 @@ import java.util.List;
 
 
 @RequestMapping("/admin-panel")
-@Tag(name = "Контроллер админ-панели", description = "Управление пользователями и соревнованиями")
+@Tag(name = "Контроллер админ-панели ✅", description = "Управление пользователями и соревнованиями")
 public interface AdminPanelApi {
 
     String defaultOffset = "0";

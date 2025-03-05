@@ -15,7 +15,7 @@ import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 
 @RequestMapping("/auth")
-@Tag(name = "Контроллер регистрации", description = "Управление пользователями и соревнованиями")
+@Tag(name = "Контроллер регистрации ✅", description = "Управление пользователями и соревнованиями")
 public interface AuthApi {
 
     @Operation(summary = "Регистрация пользователя")

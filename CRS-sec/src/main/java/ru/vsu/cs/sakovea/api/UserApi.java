@@ -13,7 +13,7 @@ import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 
 @RequestMapping("/user")
-@Tag(name = "Контроллер Пользователя", description = "Управление пользователем")
+@Tag(name = "Контроллер Пользователя ✅", description = "Управление пользователем")
 public interface UserApi {
 
     @Operation(
