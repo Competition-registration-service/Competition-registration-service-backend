@@ -14,6 +14,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "content")
 public class Content {
+    // todo Проверить при создании контента если реф пейдж то страница если ее нет то просто контент
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
