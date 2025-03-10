@@ -38,7 +38,7 @@ public interface AdminPanelApi {
     @PostMapping("/event/create")
     ResponseEntity<?> createEvent(HttpServletResponse response,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                       @RequestBody CreateEventDto eventDto);
+                                       @RequestBody CreateEventDto eventDto); // todo изменить на реквест ивент дто
 
     @Operation(
             summary = "Обновление мероприятия",
@@ -47,7 +47,7 @@ public interface AdminPanelApi {
     @PutMapping("/event/update")
     ResponseEntity<Competition> updateEvent(HttpServletResponse response,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                       @RequestBody CompetitionDto competitionDto);
+                                       @RequestBody CompetitionDto competitionDto); // todo изменить на реквест ивент дто
 
     @Operation(
             summary = "Создание соревнования",
@@ -73,7 +73,7 @@ public interface AdminPanelApi {
             summary = "Создание контента(страниц) мероприятия или соревнование",
             description = "Создает страницу или контент для мероприятия или соревнования"
     )
-    @PostMapping("/competition/{id}/content/create")
+    @PostMapping("/event/{id}/content/create")
     ResponseEntity<?> createCompetitionContent(HttpServletResponse response,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails,
                                         @RequestBody RequestContentDto contentDto,
@@ -83,7 +83,7 @@ public interface AdminPanelApi {
             summary = "Обновление контента(страниц) мероприятия или соревнование",
             description = "Обновляет страницу или контент для мероприятия или соревнования"
     )
-    @PutMapping("/competition/{id}/content/update")
+    @PutMapping("/event/{id}/content/update")
     ResponseEntity<ContentDto> updateCompetitionContent(HttpServletResponse response,
                                                      @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                      @RequestBody ContentDto contentDto,

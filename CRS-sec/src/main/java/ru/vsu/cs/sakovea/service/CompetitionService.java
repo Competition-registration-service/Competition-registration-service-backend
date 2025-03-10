@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.competition.*;
+import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
 import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
 import ru.vsu.cs.sakovea.mapper.*;
 import ru.vsu.cs.sakovea.models.Competition;
@@ -184,6 +185,19 @@ public class CompetitionService {
     }
 
 
+    public List<ResponseFieldDto> getCompetitionRegistrationPage(Integer id, Integer competitionId) {
+        Competition event = competitionRepository.findById(id).get();
+        if (event == null){
+            throw new ThrowMyException("Такого мероприятия не существует!");
+        } else {
+            Competition competition = competitionRepository.findById(competitionId).get();
+
+            if (event.getCompetitions().contains(competition)){
+                return FieldsMapper.INSTANCE.toResponseFieldDtoList(competition.getFields());
+            }
+            throw new ThrowMyException("Соревнования не существует!");
+        }
+    }
 }
 
 

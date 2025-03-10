@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import ru.vsu.cs.sakovea.api.dto.*;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.contestant.ContestantDto;
+import ru.vsu.cs.sakovea.api.dto.field.FieldDto;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
 import ru.vsu.cs.sakovea.api.dto.userCompPerms.UserCompPermDto;
 

@@ -3,7 +3,8 @@ package ru.vsu.cs.sakovea.mapper;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import ru.vsu.cs.sakovea.api.dto.FieldDto;
+import ru.vsu.cs.sakovea.api.dto.field.FieldDto;
+import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
 import ru.vsu.cs.sakovea.models.Field;
 
 import java.util.List;
@@ -22,4 +23,7 @@ public interface FieldsMapper {
 
     @IterableMapping(elementTargetType = Field.class)
     List<Field> toFieldList(List<FieldDto> fieldDtoList);
+
+    @IterableMapping(elementTargetType = FieldDto.class)
+    List<ResponseFieldDto> toResponseFieldDtoList(List<Field> fieldList);
 }
