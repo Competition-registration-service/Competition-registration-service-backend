@@ -12,8 +12,7 @@ import ru.vsu.cs.sakovea.api.dto.registration.ChangePasswordByEmail;
 import ru.vsu.cs.sakovea.api.dto.registration.JWTRequestDto;
 import ru.vsu.cs.sakovea.api.dto.registration.JWTResponseDto;
 import ru.vsu.cs.sakovea.api.dto.registration.RegistrationDto;
-import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
-import ru.vsu.cs.sakovea.models.RefValue;
+import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
@@ -126,7 +125,7 @@ public class AuthService {
                 throw new RuntimeException("Error during user authentication", e);
             }
         }
-        throw new ThrowMyException("Пользователь не подтвердил почту");
+        throw new CustomException("Пользователь не подтвердил почту");
     }
 
     public ResponseEntity<?> changePassword(ChangePasswordByEmail email) {

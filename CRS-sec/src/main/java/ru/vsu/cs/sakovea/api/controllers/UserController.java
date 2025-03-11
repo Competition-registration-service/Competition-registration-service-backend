@@ -10,6 +10,7 @@ import ru.vsu.cs.sakovea.api.UserApi;
 import ru.vsu.cs.sakovea.api.dto.user.ChangePasswordDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
+import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.repository.UserRepository;
@@ -32,24 +33,41 @@ public class UserController implements UserApi {
 //    }
 
     @Override
-    public ResponseEntity<GetUserDto> getUser(UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(userService.getUser(userDetails));
+    public ResponseEntity<?> getUser(UserDetailsImpl userDetails) {
+        try {
+            return ResponseEntity.ok(userService.getUser(userDetails));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @Override
-    public ResponseEntity<UserDto> updateUser(HttpServletResponse response, UserDetailsImpl userDetails, @Valid UserDto userDto) {
-        userService.updateUser(userDetails, userDto);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> updateUser(HttpServletResponse response, UserDetailsImpl userDetails, @Valid UserDto userDto) {
+        try {
+            userService.updateUser(userDetails, userDto);
+            return ResponseEntity.noContent().build();
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @Override
     public ResponseEntity<?> updateUserPassword(ChangePasswordDto changePasswordDto) {
-        return ResponseEntity.ok(userService.updateUserPassword(changePasswordDto));
+        try {
+            return ResponseEntity.ok(userService.updateUserPassword(changePasswordDto));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @Override
     public ResponseEntity<?> changePassword(UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(userService.changePassword(userDetails));
+        try {
+            return ResponseEntity.ok(userService.changePassword(userDetails));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
 }

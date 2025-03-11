@@ -10,6 +10,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.GetCompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.ResponseContentDto;
 import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
+import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.service.CompetitionService;
 import ru.vsu.cs.sakovea.service.ContentService;
@@ -23,36 +24,62 @@ public class CompetitionController implements CompetitionApi {
     private final ContentService contentService;
 
     @Override
-    public ResponseEntity<EventDto> getEvent(Integer id) {
-        EventDto eventDto = competitionService.getEvent(id);
-        return ResponseEntity.ok(eventDto);
+    public ResponseEntity<?> getEvent(Integer id) {
+        try {
+            return ResponseEntity.ok(competitionService.getEvent(id));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
-    public ResponseEntity<GetCompetitionDto> getCompetition(Integer eventId, Integer id) {
-        GetCompetitionDto getCompetitionDto = competitionService.getCompetition(eventId, id);
-        return ResponseEntity.ok(getCompetitionDto);
+    public ResponseEntity<?> getCompetition(Integer eventId, Integer id) {
+        try {
+            return ResponseEntity.ok(competitionService.getCompetition(eventId, id));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
-    public ResponseEntity<List<GetCompetitionDto>> getAllCompetitions(Integer eventId) {
-        List<GetCompetitionDto> competitionDtoList = competitionService.getAllCompetition(eventId);
-        return ResponseEntity.ok(competitionDtoList);
+    public ResponseEntity<?> getAllCompetitions(Integer eventId) {
+        try {
+            return ResponseEntity.ok(competitionService.getAllCompetition(eventId));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
-    public ResponseEntity<ResponseContentDto> getEventContent(Integer eventId, Integer id) {
-        ResponseContentDto contentDto = contentService.getContent(eventId, id);
-        return ResponseEntity.ok(contentDto);
+    public ResponseEntity<?> getEventContent(Integer eventId, Integer id) {
+        try {
+            return ResponseEntity.ok(contentService.getContent(eventId, id));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
-    public ResponseEntity<List<ResponseContentDto>> getEventContents(Integer id) {
-        return ResponseEntity.ok(contentService.getCompetitionContents(id));
+    public ResponseEntity<?> getEventContents(Integer id) {
+        try {
+            return ResponseEntity.ok(contentService.getCompetitionContents(id));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
-    public ResponseEntity<List<ResponseFieldDto>> getRegistrationPage(Integer id, Integer competitionId) {
-        return ResponseEntity.ok(competitionService.getCompetitionRegistrationPage(id, competitionId));
+    public ResponseEntity<?> getRegistrationPage(Integer id, Integer competitionId) {
+        try {
+            return ResponseEntity.ok(competitionService.getCompetitionRegistrationPage(id, competitionId));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 }

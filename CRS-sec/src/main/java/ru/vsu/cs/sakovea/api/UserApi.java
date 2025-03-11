@@ -21,14 +21,14 @@ public interface UserApi {
             description = "Возвращает информацию о пользователе"
     )
     @GetMapping("/profile")
-    ResponseEntity<GetUserDto> getUser(@AuthenticationPrincipal UserDetailsImpl userDetails);
+    ResponseEntity<?> getUser(@AuthenticationPrincipal UserDetailsImpl userDetails);
 
     @Operation(
             summary = "Обновление пользователя",
             description = "Обновляет пользователя и возвращает его"
     )
     @PutMapping("/profile/update")
-    ResponseEntity<UserDto> updateUser(HttpServletResponse response,
+    ResponseEntity<?> updateUser(HttpServletResponse response,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
                                        @RequestBody UserDto userDto);
 

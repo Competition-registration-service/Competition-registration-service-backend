@@ -29,21 +29,21 @@ public interface CompetitionApi {
             description = "Возвращает мероприятие по айди"
     )
     @GetMapping("/{id}")
-    ResponseEntity<EventDto> getEvent(@PathVariable("id") Integer id);
+    ResponseEntity<?> getEvent(@PathVariable("id") Integer id);
 
     @Operation(
             summary = "Получение соревнования",
             description = "Возвращает выбранное соревнование"
     )
     @GetMapping("/{eventId}/competition/{id}")
-    ResponseEntity<GetCompetitionDto> getCompetition(@PathVariable("eventId") Integer eventId, @PathVariable("id") Integer id );
+    ResponseEntity<?> getCompetition(@PathVariable("eventId") Integer eventId, @PathVariable("id") Integer id );
 
     @Operation(
             summary = "Получение списка соревнований",
             description = "Возвращает список соревнований данного мероприятия (с пагинацией через query-параметры)"
     )
     @GetMapping("/competitions")
-    ResponseEntity<List<GetCompetitionDto>> getAllCompetitions(
+    ResponseEntity<?> getAllCompetitions(
             @Schema(description = "Id мероприятия", minimum = "0")
             @RequestParam(name = "eventId", required = false)
             @Min(0)
@@ -55,7 +55,7 @@ public interface CompetitionApi {
             description = "Возвращает страницy или контент данного мероприятия"
     )
     @GetMapping("/{eventId}/content/{id}")
-    ResponseEntity<ResponseContentDto> getEventContent(@PathVariable("eventId") Integer eventId, @PathVariable("id") Integer id);
+    ResponseEntity<?> getEventContent(@PathVariable("eventId") Integer eventId, @PathVariable("id") Integer id);
 
 
     @Operation(
@@ -63,13 +63,13 @@ public interface CompetitionApi {
             description = "Возвращает страницy или контент данного мероприятия"
     )
     @GetMapping("/{id}/contents")
-    ResponseEntity<List<ResponseContentDto>> getEventContents(@PathVariable("id") Integer id);
+    ResponseEntity<?> getEventContents(@PathVariable("id") Integer id);
 
     @Operation(
             summary = "Получение формы регистрации на соревнование",
             description = "Возвращает форму регистрации на соревнование"
     )
     @GetMapping("/{id}/competition/{competitionId}/registration-page")
-    ResponseEntity<List<ResponseFieldDto>> getRegistrationPage(@PathVariable("id") Integer id,
+    ResponseEntity<?> getRegistrationPage(@PathVariable("id") Integer id,
                                                                @PathVariable("competitionId") Integer competitionId);
 }

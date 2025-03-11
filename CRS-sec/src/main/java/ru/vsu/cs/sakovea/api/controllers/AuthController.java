@@ -12,6 +12,7 @@ import ru.vsu.cs.sakovea.api.dto.registration.JWTResponseDto;
 import ru.vsu.cs.sakovea.api.dto.registration.RegistrationDto;
 import ru.vsu.cs.sakovea.api.dto.user.ChangePasswordDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
+import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.service.AuthService;
 import ru.vsu.cs.sakovea.service.UserService;
 
@@ -35,21 +36,40 @@ public class AuthController implements AuthApi {
 
     @Override
     public ResponseEntity<?> confirmEmail(@Valid String token) {
-        return ResponseEntity.ok(authService.confirmEmail(token));
+        try {
+            return ResponseEntity.ok(authService.confirmEmail(token));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
-    public ResponseEntity<JWTResponseDto> login(@Valid JWTRequestDto jwtRequestDto) {
-        return ResponseEntity.ok(authService.login(jwtRequestDto));
+    public ResponseEntity<?> login(@Valid JWTRequestDto jwtRequestDto) {
+        try {
+            return ResponseEntity.ok(authService.login(jwtRequestDto));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
     public ResponseEntity<?> changePassword(ChangePasswordByEmail changePasswordByEmail) {
-        return ResponseEntity.ok(authService.changePassword(changePasswordByEmail));
+        try {
+            return ResponseEntity.ok(authService.changePassword(changePasswordByEmail));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
     public ResponseEntity<?> updateUserPassword(ChangePasswordDto changePasswordDto) {
-        return ResponseEntity.ok(userService.updateUserPassword(changePasswordDto));
+        try {
+            return ResponseEntity.ok(userService.updateUserPassword(changePasswordDto));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

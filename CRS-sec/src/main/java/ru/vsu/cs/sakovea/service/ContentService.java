@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.ResponseContentDto;
-import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
-import ru.vsu.cs.sakovea.mapper.CompetitionMapper;
+import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.mapper.ContentMapper;
 import ru.vsu.cs.sakovea.mapper.RefValueMapper;
 import ru.vsu.cs.sakovea.models.Competition;
@@ -33,7 +32,7 @@ public class ContentService {
                 getRefRole().getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid()))) {
             return;
         }
-        throw new ThrowMyException("Доступ запрещён");
+        throw new CustomException("Доступ запрещён");
     }
 
 
@@ -42,7 +41,7 @@ public class ContentService {
         if (content != null) {
             return ContentMapper.INSTANCE.toResponseContentDto(content);
         }
-        throw new ThrowMyException("Нет сонтента, тело пустое пришло из БД");
+        throw new CustomException("Нет сонтента, тело пустое пришло из БД");
     }
 
     public Content createContent(UserDetailsImpl userDetails, RequestContentDto contentDto, int competitionId) {
@@ -61,10 +60,10 @@ public class ContentService {
                 competitionRepository.save(competition);
                 content.setCompetition(competition);
                 contentRepository.save(content);
-            } else throw new ThrowMyException("Мероприятия с таким ID не существует!");
+            } else throw new CustomException("Мероприятия с таким ID не существует!");
             return content;
         }
-        throw new ThrowMyException("Данные отсутствуют");
+        throw new CustomException("Данные отсутствуют");
     }
 
     public Content updateContent(UserDetailsImpl userDetails, ContentDto contentDto) {

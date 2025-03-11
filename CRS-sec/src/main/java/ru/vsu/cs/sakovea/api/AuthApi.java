@@ -28,7 +28,7 @@ public interface AuthApi {
 
     @Operation(summary = "Аутентификация пользователя")
     @PostMapping("/login")
-    ResponseEntity<JWTResponseDto> login(@RequestBody JWTRequestDto jwtRequestDto);
+    ResponseEntity<?> login(@RequestBody JWTRequestDto jwtRequestDto);
 
     @Operation(
             summary = "Отправка на почту ссылки для подтверждения почты и изменения пароля",

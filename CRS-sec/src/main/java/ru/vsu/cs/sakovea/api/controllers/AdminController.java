@@ -11,10 +11,12 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
+import ru.vsu.cs.sakovea.api.dto.field.CreateFieldDto;
 import ru.vsu.cs.sakovea.api.dto.user.ChangeUserRoleDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserForAdminDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
+import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.mapper.ContentMapper;
 import ru.vsu.cs.sakovea.models.Competition;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
@@ -40,13 +42,22 @@ public class AdminController implements AdminPanelApi {
 
     @Override
     public ResponseEntity<?> createEvent(HttpServletResponse response, UserDetailsImpl userDetails, CreateEventDto eventDto) {
-        return ResponseEntity.ok(competitionService.createEvent(userDetails, eventDto));
+        try {
+            return ResponseEntity.ok(competitionService.createEvent(userDetails, eventDto));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @Override
-    public ResponseEntity<Competition> updateEvent(HttpServletResponse response, UserDetailsImpl userDetails,
+    public ResponseEntity<?> updateEvent(HttpServletResponse response, UserDetailsImpl userDetails,
                                                    CompetitionDto competitionDto) {
-        return ResponseEntity.ok(competitionService.updateEvent(userDetails, competitionDto));
+        try {
+            return ResponseEntity.ok(competitionService.updateEvent(userDetails, competitionDto));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
 
@@ -56,42 +67,85 @@ public class AdminController implements AdminPanelApi {
     @Override
     public ResponseEntity<?> createCompetition(HttpServletResponse response, UserDetailsImpl userDetails,
                                                CompetitionCreateDto competitionCreateDto, int eventId) {
-        return ResponseEntity.ok(competitionService.createCompetition(userDetails, competitionCreateDto, eventId));
+        try {
+            return ResponseEntity.ok(competitionService.createCompetition(userDetails, competitionCreateDto, eventId));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @Override
-    public ResponseEntity<Competition> updateCompetition(HttpServletResponse response, UserDetailsImpl userDetails,
+    public ResponseEntity<?> updateCompetition(HttpServletResponse response, UserDetailsImpl userDetails,
                                                          CompetitionDto competitionDto, int eventId) {
-        return ResponseEntity.ok(competitionService.updateCompetition(userDetails, competitionDto));
+        try {
+            return ResponseEntity.ok(competitionService.updateCompetition(userDetails, competitionDto));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
     public ResponseEntity<?> createCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
                                                        RequestContentDto contentDto, int competitionId) {
-        return ResponseEntity.ok(contentService.createContent(userDetails, contentDto, competitionId));
+        try {
+            return ResponseEntity.ok(contentService.createContent(userDetails, contentDto, competitionId));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
-    public ResponseEntity<ContentDto> updateCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
+    public ResponseEntity<?> updateCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
                                                                 ContentDto contentDto, int competitionId) {
-        return ResponseEntity.ok(ContentMapper.INSTANCE.toContentDto(contentService.updateContent(userDetails,
-                contentDto)));
+        try {
+            return ResponseEntity.ok(ContentMapper.INSTANCE.toContentDto(contentService.updateContent(userDetails,
+                    contentDto)));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
-    public ResponseEntity<List<GetUserForAdminDto>> getAllUsers(UserDetailsImpl userDetails, Integer offset, Integer limit) {
-        List<GetUserForAdminDto> userDtos = userService.getAllUsersPagination(userDetails, offset, limit);
-        return ResponseEntity.ok(userDtos);
+    public ResponseEntity<?> getAllUsers(UserDetailsImpl userDetails, Integer offset, Integer limit) {
+        try {
+            return ResponseEntity.ok(userService.getAllUsersPagination(userDetails, offset, limit));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
-    public ResponseEntity<UserDto> getUserForAdmin(UserDetailsImpl userDetails, int userId) {
-        return ResponseEntity.ok(userService.getUserForAdmin(userDetails, userId));
+    public ResponseEntity<?> getUserForAdmin(UserDetailsImpl userDetails, int userId) {
+        try {
+            return ResponseEntity.ok(userService.getUserForAdmin(userDetails, userId));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @Override
-    public ResponseEntity<UserDto> changeUserRole(UserDetailsImpl userDetails, int userId, ChangeUserRoleDto userRoleDto) {
-        return ResponseEntity.ok(userService.changeUserRole(userDetails, userId, userRoleDto));
+    public ResponseEntity<?> changeUserRole(UserDetailsImpl userDetails, int userId, ChangeUserRoleDto userRoleDto) {
+        try {
+            return ResponseEntity.ok(userService.changeUserRole(userDetails, userId, userRoleDto));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+    }
+
+    @Override
+    public ResponseEntity<?> createCompetitionRegistrationPage(HttpServletResponse response, UserDetailsImpl userDetails,
+                                                               CreateFieldDto createFieldDto, Integer id, Integer competitionId) {
+        try {
+            return ResponseEntity.ok(competitionService.createCompetitionRegistrationPage(userDetails, createFieldDto, id, competitionId));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }

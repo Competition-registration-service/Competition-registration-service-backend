@@ -14,6 +14,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
+import ru.vsu.cs.sakovea.api.dto.field.CreateFieldDto;
 import ru.vsu.cs.sakovea.api.dto.user.ChangeUserRoleDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserForAdminDto;
@@ -45,7 +46,7 @@ public interface AdminPanelApi {
             description = "Обновляет информацию мероприятия"
     )
     @PutMapping("/event/update")
-    ResponseEntity<Competition> updateEvent(HttpServletResponse response,
+    ResponseEntity<?> updateEvent(HttpServletResponse response,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
                                        @RequestBody CompetitionDto competitionDto); // todo изменить на реквест ивент дто
 
@@ -64,7 +65,7 @@ public interface AdminPanelApi {
             description = "Обновляет информацию соревнования"
     )
     @PutMapping("/event/{id}/update-competition")
-    ResponseEntity<Competition> updateCompetition(HttpServletResponse response,
+    ResponseEntity<?> updateCompetition(HttpServletResponse response,
                                                      @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                      @RequestBody CompetitionDto competitionDto,
                                                      @PathVariable ("id") int eventId);
@@ -84,7 +85,7 @@ public interface AdminPanelApi {
             description = "Обновляет страницу или контент для мероприятия или соревнования"
     )
     @PutMapping("/event/{id}/content/update")
-    ResponseEntity<ContentDto> updateCompetitionContent(HttpServletResponse response,
+    ResponseEntity<?> updateCompetitionContent(HttpServletResponse response,
                                                      @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                      @RequestBody ContentDto contentDto,
                                                         @PathVariable ("id") int competitionId);
@@ -94,7 +95,7 @@ public interface AdminPanelApi {
             description = "Возвращает список пользователей (с пагинацией через query-параметры)"
     )
     @GetMapping("/users")
-    ResponseEntity<List<GetUserForAdminDto>> getAllUsers(
+    ResponseEntity<?> getAllUsers(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
 
             @Schema(description = "Номер страницы для пагинации", minimum = "0", defaultValue = defaultOffset)
@@ -113,7 +114,7 @@ public interface AdminPanelApi {
             description = "Возвращает информацию о пользователе"
     )
     @GetMapping("/user/{id}")
-    ResponseEntity<UserDto> getUserForAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails,
+    ResponseEntity<?> getUserForAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                @PathVariable ("id") int userId);
 
 
@@ -122,7 +123,20 @@ public interface AdminPanelApi {
             description = "Возвращает информацию о пользователе"
     )
     @PutMapping("/user/{id}")
-    ResponseEntity<UserDto> changeUserRole(@AuthenticationPrincipal UserDetailsImpl userDetails,
+    ResponseEntity<?> changeUserRole(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                             @PathVariable ("id") int userId,
                                            @RequestBody ChangeUserRoleDto changeUserRoleDto);
+
+
+
+    @Operation(
+            summary = "Создание формы регистрации на соревнования",
+            description = "Создает форму регистрации на соревнования"
+    )
+    @PostMapping("/event/{id}/competition/{competitionId}/create-registration-page")
+    ResponseEntity<?> createCompetitionRegistrationPage(HttpServletResponse response,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                        @RequestBody CreateFieldDto createFieldDto,
+                                                        @PathVariable("id") Integer id,
+                                                        @PathVariable("competitionId") Integer competitionId);
 }

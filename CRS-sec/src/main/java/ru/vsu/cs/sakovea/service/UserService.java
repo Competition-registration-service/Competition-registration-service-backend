@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.registration.ChangePasswordByEmail;
 import ru.vsu.cs.sakovea.api.dto.user.*;
-import ru.vsu.cs.sakovea.exeptions.ThrowMyException;
+import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.mapper.UserMapper;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
@@ -47,7 +47,7 @@ public class UserService implements UserDetailsService {
                 getRefRole().getValueCid().equals(refValueRepository.findRefValueByValueCid("ADMIN").getValueCid()))) {
             return;
         }
-        throw new ThrowMyException("Доступ запрещён");
+        throw new CustomException("Доступ запрещён");
     }
 
     @Override
@@ -102,7 +102,7 @@ public class UserService implements UserDetailsService {
             }
             return userRepository.save(existingUser);
         }
-        throw new ThrowMyException("Пользователя не существует или нечего изменять");
+        throw new CustomException("Пользователя не существует или нечего изменять");
     }
 
     public GetUserDto getUser(UserDetailsImpl userDetails) {
@@ -110,7 +110,7 @@ public class UserService implements UserDetailsService {
         if (user != null) {
             return UserMapper.INSTANCE.toGetUserDto(user);
         }
-        throw new ThrowMyException("Такого пользователя нет");
+        throw new CustomException("Такого пользователя нет");
     }
 
     public ResponseEntity<?> updateUserPassword(ChangePasswordDto changePasswordDto) {
@@ -120,7 +120,7 @@ public class UserService implements UserDetailsService {
             userRepository.save(user);
             return ResponseEntity.ok("Пароль успешно изменен");
         }
-        throw new ThrowMyException("Подтверждение не получено. Ссылка не действительна или пользователя с такой почтой " +
+        throw new CustomException("Подтверждение не получено. Ссылка не действительна или пользователя с такой почтой " +
                 "не существует, введите почту на которую регистрировались!");
     }
 
@@ -148,7 +148,7 @@ public class UserService implements UserDetailsService {
         if (user != null) {
             return UserMapper.INSTANCE.toUserDto(user);
         }
-        throw new ThrowMyException("Такого пользователя нет");
+        throw new CustomException("Такого пользователя нет");
     }
 
     public UserDto changeUserRole(UserDetailsImpl userDetails, int userId, ChangeUserRoleDto changeUserRoleDto) {
@@ -171,6 +171,6 @@ public class UserService implements UserDetailsService {
                 return UserMapper.INSTANCE.toUserDto(user);
             }
         }
-        throw new ThrowMyException("Такого пользователя нет!");
+        throw new CustomException("Такого пользователя нет!");
     }
 }
