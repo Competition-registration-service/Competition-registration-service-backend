@@ -28,7 +28,7 @@ public class CompetitionController implements CompetitionApi {
         try {
             return ResponseEntity.ok(competitionService.getEvent(id));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -38,7 +38,7 @@ public class CompetitionController implements CompetitionApi {
         try {
             return ResponseEntity.ok(competitionService.getCompetition(eventId, id));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -48,7 +48,7 @@ public class CompetitionController implements CompetitionApi {
         try {
             return ResponseEntity.ok(competitionService.getAllCompetition(eventId));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -58,7 +58,7 @@ public class CompetitionController implements CompetitionApi {
         try {
             return ResponseEntity.ok(contentService.getContent(eventId, id));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -68,7 +68,7 @@ public class CompetitionController implements CompetitionApi {
         try {
             return ResponseEntity.ok(contentService.getCompetitionContents(id));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -78,7 +78,7 @@ public class CompetitionController implements CompetitionApi {
         try {
             return ResponseEntity.ok(competitionService.getCompetitionRegistrationPage(id, competitionId));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }

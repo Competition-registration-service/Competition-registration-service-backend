@@ -4,14 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.vsu.cs.sakovea.api.dto.*;
-import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
-import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
-import ru.vsu.cs.sakovea.api.dto.field.FieldDto;
-import ru.vsu.cs.sakovea.api.dto.userCompPerms.UserCompPermDto;
-import ru.vsu.cs.sakovea.api.dto.user.UserDto;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,16 +18,4 @@ public class RefValueDto {
     private String longValue;
     private boolean visible;
     private String comment;
-    private List<CompetitionDto> competitionsTypes;
-    private List<CompetitionDto> competitionsCounts;
-    private List<CompetitionDto> competitionsAges;
-    private List<ContentDto> contentPages;
-    private List<ContentDto> contentFormats;
-    private List<ContentDto> contentLanguages;
-    private List<FieldDto> fields;
-    private List<FileDto> files;
-    private List<UserDto> userEducations;
-    private List<UserDto> userCourses;
-    private List<UserDto> userRegions;
-    private List<UserCompPermDto> roles;
 }

@@ -13,6 +13,10 @@ import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
 @Data
 public class ResponseContentDto {
 
+    private int id;
     private String feelingContent;
+    private RefValueDto refPage;
+    private RefValueDto refFormat;
+    private RefValueDto refLanguage;
 
 }

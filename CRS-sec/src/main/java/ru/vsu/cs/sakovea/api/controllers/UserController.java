@@ -37,7 +37,7 @@ public class UserController implements UserApi {
         try {
             return ResponseEntity.ok(userService.getUser(userDetails));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
     }
 
@@ -47,7 +47,7 @@ public class UserController implements UserApi {
             userService.updateUser(userDetails, userDto);
             return ResponseEntity.noContent().build();
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
     }
 
@@ -56,7 +56,7 @@ public class UserController implements UserApi {
         try {
             return ResponseEntity.ok(userService.updateUserPassword(changePasswordDto));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
     }
 
@@ -65,7 +65,7 @@ public class UserController implements UserApi {
         try {
             return ResponseEntity.ok(userService.changePassword(userDetails));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }

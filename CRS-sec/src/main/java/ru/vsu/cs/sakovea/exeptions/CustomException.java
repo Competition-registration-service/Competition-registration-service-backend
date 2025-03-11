@@ -1,5 +1,8 @@
 package ru.vsu.cs.sakovea.exeptions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CustomException extends RuntimeException {
     private final String message;
 
@@ -11,5 +14,11 @@ public class CustomException extends RuntimeException {
     @Override
     public String getMessage() {
         return message;
+    }
+
+    public Map<String, String> getMessageAsJson() {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", message);
+        return errorResponse;
     }
 }

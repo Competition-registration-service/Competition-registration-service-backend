@@ -31,7 +31,11 @@ public class AuthController implements AuthApi {
 
     @Override
     public ResponseEntity<?> register(@Valid RegistrationDto registrationDto) {
-        return ResponseEntity.ok(authService.register(registrationDto));
+        try {
+            return ResponseEntity.ok(authService.register(registrationDto));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
+        }
     }
 
     @Override
@@ -39,7 +43,7 @@ public class AuthController implements AuthApi {
         try {
             return ResponseEntity.ok(authService.confirmEmail(token));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -49,7 +53,7 @@ public class AuthController implements AuthApi {
         try {
             return ResponseEntity.ok(authService.login(jwtRequestDto));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -59,7 +63,7 @@ public class AuthController implements AuthApi {
         try {
             return ResponseEntity.ok(authService.changePassword(changePasswordByEmail));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -69,7 +73,7 @@ public class AuthController implements AuthApi {
         try {
             return ResponseEntity.ok(userService.updateUserPassword(changePasswordDto));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
     }
 }

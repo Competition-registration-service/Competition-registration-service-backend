@@ -43,15 +43,15 @@ public class AuthService {
     public ResponseEntity<?> register(RegistrationDto registrationDto) {
 
         if (registrationDto == null || !isValidRegistrationData(registrationDto)) {
-            throw new IllegalArgumentException("Invalid registration data");
+            throw new CustomException("Invalid registration data");
         }
 
         if (!isLoginUnique(registrationDto.getLogin())) {
-            throw new IllegalArgumentException("Логин уже занят");
+            throw new CustomException("Логин уже занят");
         }
 
         if (!isEmailUnique(registrationDto.getEmail())) {
-            throw new IllegalArgumentException("Почта уже занята");
+            throw new CustomException("Почта уже занята");
         }
 
 

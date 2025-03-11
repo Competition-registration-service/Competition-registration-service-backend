@@ -45,7 +45,7 @@ public class AdminController implements AdminPanelApi {
         try {
             return ResponseEntity.ok(competitionService.createEvent(userDetails, eventDto));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
     }
 
@@ -55,7 +55,7 @@ public class AdminController implements AdminPanelApi {
         try {
             return ResponseEntity.ok(competitionService.updateEvent(userDetails, competitionDto));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -70,7 +70,7 @@ public class AdminController implements AdminPanelApi {
         try {
             return ResponseEntity.ok(competitionService.createCompetition(userDetails, competitionCreateDto, eventId));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
     }
 
@@ -80,7 +80,7 @@ public class AdminController implements AdminPanelApi {
         try {
             return ResponseEntity.ok(competitionService.updateCompetition(userDetails, competitionDto));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -91,7 +91,7 @@ public class AdminController implements AdminPanelApi {
         try {
             return ResponseEntity.ok(contentService.createContent(userDetails, contentDto, competitionId));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -103,7 +103,7 @@ public class AdminController implements AdminPanelApi {
             return ResponseEntity.ok(ContentMapper.INSTANCE.toContentDto(contentService.updateContent(userDetails,
                     contentDto)));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -113,7 +113,7 @@ public class AdminController implements AdminPanelApi {
         try {
             return ResponseEntity.ok(userService.getAllUsersPagination(userDetails, offset, limit));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -123,7 +123,7 @@ public class AdminController implements AdminPanelApi {
         try {
             return ResponseEntity.ok(userService.getUserForAdmin(userDetails, userId));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -133,7 +133,7 @@ public class AdminController implements AdminPanelApi {
         try {
             return ResponseEntity.ok(userService.changeUserRole(userDetails, userId, userRoleDto));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
     }
@@ -144,7 +144,7 @@ public class AdminController implements AdminPanelApi {
         try {
             return ResponseEntity.ok(competitionService.createCompetitionRegistrationPage(userDetails, createFieldDto, id, competitionId));
         } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
     }
 
