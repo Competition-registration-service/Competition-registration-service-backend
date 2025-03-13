@@ -81,5 +81,6 @@ public interface CompetitionApi {
     @PostMapping("/{id}/competition/{competitionId}/registration-page")
     ResponseEntity<?> registerOnCompetition(@PathVariable("id") Integer id,
                                             @PathVariable("competitionId") Integer competitionId,
-                                            @RequestBody RequestFieldValueDto requestFieldValueDto);
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @RequestBody List<RequestFieldValueDto> requestFieldValueDto);
 }

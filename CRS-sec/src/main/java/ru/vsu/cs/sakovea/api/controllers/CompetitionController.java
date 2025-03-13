@@ -85,7 +85,8 @@ public class CompetitionController implements CompetitionApi {
     }
 
     @Override
-    public ResponseEntity<?> registerOnCompetition(Integer id, Integer competitionId, RequestFieldValueDto requestFieldValueDto) {
+    public ResponseEntity<?> registerOnCompetition(Integer id, Integer competitionId,
+                                                   UserDetailsImpl userDetails, List<RequestFieldValueDto> requestFieldValueDto) {
         return null;
     }
 }

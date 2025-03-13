@@ -16,7 +16,9 @@ import ru.vsu.cs.sakovea.api.dto.field.FieldDto;
 public class RequestFieldValueDto {
 
     private String value;
-    private ContestantDto contestant;
-    private TeamDto team;
     private FieldDto field;
+
+
+    // todo сделать через юзкейсы с проверкой реф тайп. В реф тайп сделай еще записи по полям контестанта и команды.
+    // из токена (юзер детайлс) брать юзера и совать в контестанта при его создании.
 }
