@@ -9,8 +9,10 @@ import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
 import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.mapper.*;
 import ru.vsu.cs.sakovea.models.Competition;
+import ru.vsu.cs.sakovea.models.Field;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.repository.CompetitionRepository;
+import ru.vsu.cs.sakovea.repository.FieldRepository;
 import ru.vsu.cs.sakovea.repository.RefValueRepository;
 import ru.vsu.cs.sakovea.repository.UserCompPermsRepository;
 
@@ -23,6 +25,8 @@ public class CompetitionService {
     private final CompetitionRepository competitionRepository;
 
     private final RefValueRepository refValueRepository;
+
+    private final FieldRepository fieldRepository;
 
     private Integer MAX_NUM_OF_TEAM_MEM = 5;
     private Integer MIN_NUM_OF_TEAM_MEM = 1;
@@ -88,33 +92,33 @@ public class CompetitionService {
         checkIsUserAdmin(userDetails);
         Competition competition = new Competition();
         if (competitionDto != null) {
-            competition.setName(competitionDto.getName());
-            competition.setStartDate(competitionDto.getStartDate());
-            competition.setEndDate(competitionDto.getEndDate());
-            competition.setCid(competitionDto.getCid());
-            competition.setRefComp(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefComp()));
-            competition.setRefCompCount(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompCount()));
-            competition.setRefCompAge(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompAge()));
-            competition.setCompetitionContent(competitionDto.getCompetitionContent());
-            if (competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() != null){
-                competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
-                competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
-            } else if (competitionDto.getMaxNumOfTeamMem() == null && competitionDto.getMinNumOfTeamMem() != null) {
-                competition.setMaxNumOfTeamMem(MAX_NUM_OF_TEAM_MEM);
-                competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
-            } else if (competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() == null) {
-                competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
-                competition.setMinNumOfTeamMem(MIN_NUM_OF_TEAM_MEM);
-            }
-            competitionRepository.save(competition);
             Competition event = competitionRepository.findById(eventId);
             if (event != null) {
+                competition.setName(competitionDto.getName());
+                competition.setStartDate(competitionDto.getStartDate());
+                competition.setEndDate(competitionDto.getEndDate());
+                competition.setCid(competitionDto.getCid());
+                competition.setRefComp(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefComp()));
+                competition.setRefCompCount(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompCount()));
+                competition.setRefCompAge(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompAge()));
+                competition.setCompetitionContent(competitionDto.getCompetitionContent());
+                if (competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() != null){
+                    competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
+                    competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
+                } else if (competitionDto.getMaxNumOfTeamMem() == null && competitionDto.getMinNumOfTeamMem() != null) {
+                    competition.setMaxNumOfTeamMem(MAX_NUM_OF_TEAM_MEM);
+                    competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
+                } else if (competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() == null) {
+                    competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
+                    competition.setMinNumOfTeamMem(MIN_NUM_OF_TEAM_MEM);
+                }
                 competition.setParent(event);
                 competitionRepository.save(competition);
                 event.getCompetitions().add(competition);
                 competitionRepository.save(event);
-            } else throw new CustomException("Мероприятия с таким ID не существует!");
-            return competition;
+                return competition;
+            } else throw new CustomException("Мероприятия с таким ID не существует! Создать соревнование" +
+                    " в несуществующем мероприятии невозможно");
         }
         throw new CustomException("Данные отсутствуют");
     }
@@ -202,7 +206,32 @@ public class CompetitionService {
 
     public Object createCompetitionRegistrationPage(UserDetailsImpl userDetails, CreateFieldDto createFieldDto,
                                                     Integer id, Integer competitionId) {
-        return null;
+        checkIsUserAdmin(userDetails);
+        Competition event = competitionRepository.findById(id).get();
+        if (event == null){
+            throw new CustomException("Такого мероприятия не существует!");
+        } else {
+            Competition competition = competitionRepository.findById(competitionId).get();
+
+            if (event.getCompetitions().contains(competition)){
+                Field field = new Field();
+                field.setSelectDomainCid(createFieldDto.getSelectDomainCid());
+                field.setTeamField(createFieldDto.isTeamField());
+                field.setCid(createFieldDto.getCid());
+                field.setShortName(createFieldDto.getShortName());
+                field.setLongName(createFieldDto.getLongName());
+                field.setComment(createFieldDto.getComment());
+                field.setExampleValue(createFieldDto.getExampleValue());
+                field.setMaxLength(createFieldDto.getMaxLength());
+                field.setOrderr(createFieldDto.getOrderr());
+                field.setOptional(createFieldDto.isOptional());
+                field.setRefType(RefValueMapper.INSTANCE.toRefValue(createFieldDto.getRefType()));
+                competition.getFields().add(field);
+                field.setCompetition(competition);
+                fieldRepository.save(field);
+            }
+            throw new CustomException("Соревнования не существует!");
+        }
     }
 }
 

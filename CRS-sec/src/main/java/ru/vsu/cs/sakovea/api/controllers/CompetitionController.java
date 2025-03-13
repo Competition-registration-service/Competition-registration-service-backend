@@ -10,6 +10,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.GetCompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.ResponseContentDto;
 import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
+import ru.vsu.cs.sakovea.api.dto.fieldvalue.RequestFieldValueDto;
 import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.service.CompetitionService;
@@ -81,5 +82,10 @@ public class CompetitionController implements CompetitionApi {
             return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
 
+    }
+
+    @Override
+    public ResponseEntity<?> registerOnCompetition(Integer id, Integer competitionId, RequestFieldValueDto requestFieldValueDto) {
+        return null;
     }
 }

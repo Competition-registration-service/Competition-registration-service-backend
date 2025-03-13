@@ -4,20 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.vsu.cs.sakovea.api.dto.FieldValueDto;
-import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
 public class CreateFieldDto {
-    private int id;
-    //private String selectDomainCid;
-    //private boolean teamField;
+    private String selectDomainCid;
+    private boolean teamField;
     private String cid;
     private String shortName;
     private String longName;

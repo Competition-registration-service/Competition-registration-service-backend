@@ -13,6 +13,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.GetCompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.ResponseContentDto;
 import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
+import ru.vsu.cs.sakovea.api.dto.fieldvalue.RequestFieldValueDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 
@@ -72,4 +73,13 @@ public interface CompetitionApi {
     @GetMapping("/{id}/competition/{competitionId}/registration-page")
     ResponseEntity<?> getRegistrationPage(@PathVariable("id") Integer id,
                                                                @PathVariable("competitionId") Integer competitionId);
+
+    @Operation(
+            summary = "Регистрация на соревнование",
+            description = "Регистрирует участника на соревнование"
+    )
+    @PostMapping("/{id}/competition/{competitionId}/registration-page")
+    ResponseEntity<?> registerOnCompetition(@PathVariable("id") Integer id,
+                                            @PathVariable("competitionId") Integer competitionId,
+                                            @RequestBody RequestFieldValueDto requestFieldValueDto);
 }
