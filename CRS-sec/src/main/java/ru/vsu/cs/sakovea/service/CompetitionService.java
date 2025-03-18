@@ -6,11 +6,10 @@ import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.competition.*;
 import ru.vsu.cs.sakovea.api.dto.field.CreateFieldDto;
 import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
+import ru.vsu.cs.sakovea.api.dto.fieldvalue.RequestFieldValueDto;
 import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.mapper.*;
-import ru.vsu.cs.sakovea.models.Competition;
-import ru.vsu.cs.sakovea.models.Field;
-import ru.vsu.cs.sakovea.models.UserDetailsImpl;
+import ru.vsu.cs.sakovea.models.*;
 import ru.vsu.cs.sakovea.repository.CompetitionRepository;
 import ru.vsu.cs.sakovea.repository.FieldRepository;
 import ru.vsu.cs.sakovea.repository.RefValueRepository;
@@ -229,6 +228,26 @@ public class CompetitionService {
                 competition.getFields().add(field);
                 field.setCompetition(competition);
                 fieldRepository.save(field);
+            }
+            throw new CustomException("Соревнования не существует!");
+        }
+    }
+
+    public Object registerOnCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
+                                        List<RequestFieldValueDto> requestFieldValueDto) {
+        Competition event = competitionRepository.findById(id).get();
+        if (event == null){
+            throw new CustomException("Такого мероприятия не существует!");
+        } else {
+            Competition competition = competitionRepository.findById(competitionId).get();
+
+            if (event.getCompetitions().contains(competition)){
+                User user = userDetails.getUser();
+                Contestant contestant = new Contestant();
+
+
+                // todo сделать через юзкейсы с проверкой реф тайп. В реф тайп сделай еще записи по полям контестанта и команды.
+                // из токена (юзер детайлс) брать юзера и совать в контестанта при его создании.
             }
             throw new CustomException("Соревнования не существует!");
         }

@@ -87,6 +87,10 @@ public class CompetitionController implements CompetitionApi {
     @Override
     public ResponseEntity<?> registerOnCompetition(Integer id, Integer competitionId,
                                                    UserDetailsImpl userDetails, List<RequestFieldValueDto> requestFieldValueDto) {
-        return null;
+        try {
+            return ResponseEntity.ok(competitionService.registerOnCompetition(id, competitionId, userDetails, requestFieldValueDto));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
+        }
     }
 }

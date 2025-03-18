@@ -5,5 +5,6 @@ public enum Role {
     USER,
     ADMIN,
     CONTESTANT,
+    CAPITAN,
     VIP
 }
