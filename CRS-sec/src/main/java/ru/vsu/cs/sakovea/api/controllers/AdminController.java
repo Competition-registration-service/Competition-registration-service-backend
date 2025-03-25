@@ -148,4 +148,13 @@ public class AdminController implements AdminPanelApi {
         }
     }
 
+    @Override
+    public ResponseEntity<?> getRefValuesAdmin(UserDetailsImpl userDetails) {
+        try {
+            return ResponseEntity.ok(competitionService.getRefValues(userDetails));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
+        }
+    }
+
 }

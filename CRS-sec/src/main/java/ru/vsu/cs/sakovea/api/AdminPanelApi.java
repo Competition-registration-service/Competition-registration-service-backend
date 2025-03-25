@@ -139,4 +139,12 @@ public interface AdminPanelApi {
                                         @RequestBody CreateFieldDto createFieldDto,
                                                         @PathVariable("id") Integer id,
                                                         @PathVariable("competitionId") Integer competitionId);
+
+
+    @Operation(
+            summary = "Получение словаря",
+            description = "Возвращает информацию о словаре"
+    )
+    @GetMapping("/ref-values")
+    ResponseEntity<?> getRefValuesAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails);
 }

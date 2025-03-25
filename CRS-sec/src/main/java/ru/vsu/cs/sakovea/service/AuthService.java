@@ -102,12 +102,15 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid login data");
         }
         User user = userRepository.findUserByLogin(jwtRequestDto.getLogin());
+        System.out.println(jwtRequestDto.getLogin());
+        System.out.println(user.getLogin());
         if (user.getActiveCode() == null){
             try {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         jwtRequestDto.getLogin(),
                         jwtRequestDto.getPassword()
                 ));
+
 
                 UserDetailsImpl userDetails = userService.loadUserByUsername(jwtRequestDto.getLogin());
                 for (UserCompPerm r : userDetails.getUser().getRoles()){

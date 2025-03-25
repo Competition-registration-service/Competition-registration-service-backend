@@ -5,6 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
+import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueResponseDto;
 import ru.vsu.cs.sakovea.models.Competition;
 import ru.vsu.cs.sakovea.models.RefValue;
 
@@ -18,6 +19,11 @@ public interface RefValueMapper {
 
     @IterableMapping(elementTargetType = RefValueDto.class)
     List<RefValueDto> toRefValueDtoList(List<RefValue> refValueList);
+
+    RefValueResponseDto toRefValueResponseDto(RefValue refValue);
+
+    @IterableMapping(elementTargetType = RefValueDto.class)
+    List<RefValueResponseDto> toRefValueResponseDtoList(List<RefValue> refValueList);
 
     RefValue toRefValue(RefValueDto refValueDto);
 

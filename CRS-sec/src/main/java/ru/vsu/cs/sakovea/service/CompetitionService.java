@@ -252,6 +252,15 @@ public class CompetitionService {
             throw new CustomException("Соревнования не существует!");
         }
     }
+
+    public Object getRefValues(UserDetailsImpl userDetails) {
+        checkIsUserAdmin(userDetails);
+        List<RefValue> refValues = refValueRepository.findAll();
+        if (refValues == null){
+            throw new CustomException("Словарь пустой!");
+        }
+        return RefValueMapper.INSTANCE.toRefValueResponseDtoList(refValues);
+    }
 }
 
 
