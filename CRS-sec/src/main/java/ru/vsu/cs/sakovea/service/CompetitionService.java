@@ -6,15 +6,18 @@ import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.competition.*;
 import ru.vsu.cs.sakovea.api.dto.field.CreateFieldDto;
 import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
+import ru.vsu.cs.sakovea.api.dto.fieldvalue.FieldValueDto;
 import ru.vsu.cs.sakovea.api.dto.fieldvalue.RequestFieldValueDto;
 import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.mapper.*;
 import ru.vsu.cs.sakovea.models.*;
+import ru.vsu.cs.sakovea.models.enums.Role;
 import ru.vsu.cs.sakovea.repository.CompetitionRepository;
 import ru.vsu.cs.sakovea.repository.FieldRepository;
 import ru.vsu.cs.sakovea.repository.RefValueRepository;
 import ru.vsu.cs.sakovea.repository.UserCompPermsRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -101,7 +104,7 @@ public class CompetitionService {
                 competition.setRefCompCount(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompCount()));
                 competition.setRefCompAge(RefValueMapper.INSTANCE.toRefValue(competitionDto.getRefCompAge()));
                 competition.setCompetitionContent(competitionDto.getCompetitionContent());
-                if (competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() != null){
+                if (competitionDto.getMaxNumOfTeamMem() != null && competitionDto.getMinNumOfTeamMem() != null) {
                     competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
                     competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
                 } else if (competitionDto.getMaxNumOfTeamMem() == null && competitionDto.getMinNumOfTeamMem() != null) {
@@ -151,14 +154,14 @@ public class CompetitionService {
         if (competitionDto.getCompetitionContent() != null) {
             competition.setCompetitionContent(competitionDto.getCompetitionContent());
         }
-        if (competitionDto.getMinNumOfTeamMem() != -1){
+        if (competitionDto.getMinNumOfTeamMem() != -1) {
             competition.setMinNumOfTeamMem(competitionDto.getMinNumOfTeamMem());
         }
-        if (competitionDto.getMaxNumOfTeamMem() != -1){
+        if (competitionDto.getMaxNumOfTeamMem() != -1) {
             competition.setMaxNumOfTeamMem(competitionDto.getMaxNumOfTeamMem());
         }
 
-            return competitionRepository.save(competition);
+        return competitionRepository.save(competition);
     }
 
 
@@ -191,12 +194,12 @@ public class CompetitionService {
 
     public List<ResponseFieldDto> getCompetitionRegistrationPage(Integer id, Integer competitionId) {
         Competition event = competitionRepository.findById(id).get();
-        if (event == null){
+        if (event == null) {
             throw new CustomException("Такого мероприятия не существует!");
         } else {
             Competition competition = competitionRepository.findById(competitionId).get();
 
-            if (event.getCompetitions().contains(competition)){
+            if (event.getCompetitions().contains(competition)) {
                 return FieldsMapper.INSTANCE.toResponseFieldDtoList(competition.getFields());
             }
             throw new CustomException("Соревнования не существует!");
@@ -207,12 +210,12 @@ public class CompetitionService {
                                                     Integer id, Integer competitionId) {
         checkIsUserAdmin(userDetails);
         Competition event = competitionRepository.findById(id).get();
-        if (event == null){
+        if (event == null) {
             throw new CustomException("Такого мероприятия не существует!");
         } else {
             Competition competition = competitionRepository.findById(competitionId).get();
 
-            if (event.getCompetitions().contains(competition)){
+            if (event.getCompetitions().contains(competition)) {
                 Field field = new Field();
                 field.setSelectDomainCid(createFieldDto.getSelectDomainCid());
                 field.setTeamField(createFieldDto.isTeamField());
@@ -236,16 +239,56 @@ public class CompetitionService {
     public Object registerOnCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
                                         List<RequestFieldValueDto> requestFieldValueDto) {
         Competition event = competitionRepository.findById(id).get();
-        if (event == null){
+        if (event == null) {
             throw new CustomException("Такого мероприятия не существует!");
         } else {
             Competition competition = competitionRepository.findById(competitionId).get();
 
-            if (event.getCompetitions().contains(competition)){
+            if (event.getCompetitions().contains(competition)) {
                 User user = userDetails.getUser();
                 Contestant contestant = new Contestant();
+                contestant.setUser(user);
 
 
+                for (RequestFieldValueDto fieldValueDto : requestFieldValueDto) {
+                    String type = fieldValueDto.getField().getRefType().getValueCid();
+                    switch (type) {
+                        case ("surname"):
+                            contestant.setSurname(fieldValueDto.getValue());
+                            break;
+                        case ("name"):
+                            contestant.setName(fieldValueDto.getValue());
+                            break;
+                        case ("patronymic"):
+                            contestant.setThirdname(fieldValueDto.getValue());
+                            break;
+                        case ("login"):
+                            contestant.setNickname(fieldValueDto.getValue());
+                            break;
+                        case ("phone"):
+                            contestant.setPhone(fieldValueDto.getValue());
+                            break;
+                        case ("email"):
+                            contestant.setEmail(fieldValueDto.getValue());
+                            break;
+                        case ("vk"):
+                            contestant.setVk(fieldValueDto.getValue());
+                            break;
+                        case ("telegram"):
+                            contestant.setTelegram(fieldValueDto.getValue());
+                            break;
+                        default:
+                            break;
+                    }
+                    FieldValue fieldValue = new FieldValue();
+                    fieldValue.setValue(fieldValueDto.getValue());
+                    fieldValue.setContestant(contestant);
+                    if (competition.getRefCompCount().getValueCid().equals("Team")) {
+                        fieldValue.setTeam(contestant.getTeam());
+                    }
+                    fieldValue.setField(FieldsMapper.INSTANCE.toField(fieldValueDto.getField()));
+                }
+                List<FieldValueDto> fieldValueDtos = new ArrayList<>();
                 // todo сделать через юзкейсы с проверкой реф тайп. В реф тайп сделай еще записи по полям контестанта и команды.
                 // из токена (юзер детайлс) брать юзера и совать в контестанта при его создании.
             }
@@ -256,7 +299,7 @@ public class CompetitionService {
     public Object getRefValues(UserDetailsImpl userDetails) {
         checkIsUserAdmin(userDetails);
         List<RefValue> refValues = refValueRepository.findAll();
-        if (refValues == null){
+        if (refValues == null) {
             throw new CustomException("Словарь пустой!");
         }
         return RefValueMapper.INSTANCE.toRefValueResponseDtoList(refValues);
