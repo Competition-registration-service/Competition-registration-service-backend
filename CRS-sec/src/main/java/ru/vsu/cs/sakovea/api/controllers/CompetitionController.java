@@ -85,10 +85,36 @@ public class CompetitionController implements CompetitionApi {
     }
 
     @Override
-    public ResponseEntity<?> registerOnCompetition(Integer id, Integer competitionId,
-                                                   UserDetailsImpl userDetails, List<RequestFieldValueDto> requestFieldValueDto) {
+    public ResponseEntity<?> registerOnSingleCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails, List<RequestFieldValueDto> requestFieldValueDto) {
         try {
             return ResponseEntity.ok(competitionService.registerOnCompetition(id, competitionId, userDetails, requestFieldValueDto));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> checkTeamAccessCode(Integer id,  UserDetailsImpl userDetails, Integer competitionId, String teamCode) {
+        try {
+            return ResponseEntity.ok(competitionService.checkAccessCode(id, userDetails, competitionId, teamCode));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> registerOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails, List<RequestFieldValueDto> requestFieldValueDto) {
+        try {
+            return ResponseEntity.ok(competitionService.registerOnCompetition(id, competitionId, userDetails, requestFieldValueDto));
+        } catch (CustomException e) {
+            return ResponseEntity.badRequest().body(e.getMessageAsJson());
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> capitanRegisterOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails, List<RequestFieldValueDto> requestFieldValueDto) {
+        try {
+            return ResponseEntity.ok(competitionService.registerOnTeamCompetition(id, competitionId, userDetails, requestFieldValueDto));
         } catch (CustomException e) {
             return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }

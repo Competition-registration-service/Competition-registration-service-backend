@@ -8,17 +8,20 @@ import ru.vsu.cs.sakovea.api.dto.field.CreateFieldDto;
 import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
 import ru.vsu.cs.sakovea.api.dto.fieldvalue.FieldValueDto;
 import ru.vsu.cs.sakovea.api.dto.fieldvalue.RequestFieldValueDto;
+import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueResponseDto;
 import ru.vsu.cs.sakovea.exeptions.CustomException;
 import ru.vsu.cs.sakovea.mapper.*;
 import ru.vsu.cs.sakovea.models.*;
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+import org.passay.PasswordGenerator;
 import ru.vsu.cs.sakovea.models.enums.Role;
-import ru.vsu.cs.sakovea.repository.CompetitionRepository;
-import ru.vsu.cs.sakovea.repository.FieldRepository;
-import ru.vsu.cs.sakovea.repository.RefValueRepository;
-import ru.vsu.cs.sakovea.repository.UserCompPermsRepository;
+import ru.vsu.cs.sakovea.repository.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +32,12 @@ public class CompetitionService {
     private final RefValueRepository refValueRepository;
 
     private final FieldRepository fieldRepository;
+
+    private final ContestantRepository contestantRepository;
+
+    private final FieldValueRepository fieldValueRepository;
+
+    private final TeamRepository teamRepository;
 
     private Integer MAX_NUM_OF_TEAM_MEM = 5;
     private Integer MIN_NUM_OF_TEAM_MEM = 1;
@@ -246,8 +255,10 @@ public class CompetitionService {
 
             if (event.getCompetitions().contains(competition)) {
                 User user = userDetails.getUser();
+                // todo продумать (сделать отдельную функцию регистрации участника и члена команды на соревнование)
                 Contestant contestant = new Contestant();
                 contestant.setUser(user);
+                contestant.setTeamCreator(false);
 
 
                 for (RequestFieldValueDto fieldValueDto : requestFieldValueDto) {
@@ -283,12 +294,11 @@ public class CompetitionService {
                     FieldValue fieldValue = new FieldValue();
                     fieldValue.setValue(fieldValueDto.getValue());
                     fieldValue.setContestant(contestant);
-                    if (competition.getRefCompCount().getValueCid().equals("Team")) {
-                        fieldValue.setTeam(contestant.getTeam());
-                    }
                     fieldValue.setField(FieldsMapper.INSTANCE.toField(fieldValueDto.getField()));
+                    fieldValueRepository.save(fieldValue);
                 }
-                List<FieldValueDto> fieldValueDtos = new ArrayList<>();
+                contestantRepository.save(contestant);
+                return CompetitionMapper.INSTANCE.toCompetitionDto(competition);
                 // todo сделать через юзкейсы с проверкой реф тайп. В реф тайп сделай еще записи по полям контестанта и команды.
                 // из токена (юзер детайлс) брать юзера и совать в контестанта при его создании.
             }
@@ -296,15 +306,120 @@ public class CompetitionService {
         }
     }
 
-    public Object getRefValues(UserDetailsImpl userDetails) {
-        checkIsUserAdmin(userDetails);
+
+    // todo Эффективным скуф запросом сделать в виде мапы а не листа (ключ=domain_cid, значение=List<Ref_value>)
+    public Map<String, List<RefValueResponseDto>> getRefValues(UserDetailsImpl userDetails) {
         List<RefValue> refValues = refValueRepository.findAll();
-        if (refValues == null) {
+
+        if (refValues.isEmpty()) {
             throw new CustomException("Словарь пустой!");
         }
-        return RefValueMapper.INSTANCE.toRefValueResponseDtoList(refValues);
+
+        return refValues.stream()
+                .collect(Collectors.groupingBy(
+                        RefValue::getDomainCid,
+                        Collectors.mapping(
+                                RefValueMapper.INSTANCE::toRefValueResponseDto,
+                                Collectors.toList()
+                        )
+                ));
+    }
+
+    public Object checkAccessCode(Integer id, UserDetailsImpl userDetails, Integer competitionId, String teamCode) {
+        Competition event = competitionRepository.findById(id).get();
+        if (event == null) {
+            throw new CustomException("Такого мероприятия не существует!");
+        } else {
+            Competition competition = competitionRepository.findById(competitionId).get();
+            if (event.getCompetitions().contains(competition)) {
+                if (teamRepository.findTeamByAccessCode(teamCode) != null) {
+                    Contestant contestant = new Contestant();
+                    contestant.setUser(userDetails.getUser());
+                    contestant.setTeam(teamRepository.findTeamByAccessCode(teamCode));
+                    return "Команда найдена!";
+                }
+                throw new CustomException("Такой команды не существует! Неверный код!");
+            }
+            throw new CustomException("Соревнования не существует!");
+
+        }
+    }
+
+    public Object registerOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
+                                            List<RequestFieldValueDto> requestFieldValueDto) {
+        Competition event = competitionRepository.findById(id).get();
+        if (event == null) {
+            throw new CustomException("Такого мероприятия не существует!");
+        } else {
+            Competition competition = competitionRepository.findById(competitionId).get();
+
+            if (event.getCompetitions().contains(competition)) {
+                User user = userDetails.getUser();
+                Team team = new Team();
+                Contestant contestant = new Contestant();
+                contestant.setUser(user);
+                contestant.setTeamCreator(true);
+                team.setCompetition(competition);
+                PasswordGenerator gen = new PasswordGenerator();
+                String code = gen.generatePassword(10,
+                        new CharacterRule(EnglishCharacterData.UpperCase, 5),
+                        new CharacterRule(EnglishCharacterData.Digit, 5));
+                team.setAccessCode(code);
+
+
+                for (RequestFieldValueDto fieldValueDto : requestFieldValueDto) {
+                    String type = fieldValueDto.getField().getRefType().getValueCid();
+                    switch (type) {
+                        case ("surname"):
+                            contestant.setSurname(fieldValueDto.getValue());
+                            break;
+                        case ("name"):
+                            contestant.setName(fieldValueDto.getValue());
+                            break;
+                        case ("patronymic"):
+                            contestant.setThirdname(fieldValueDto.getValue());
+                            break;
+                        case ("login"):
+                            contestant.setNickname(fieldValueDto.getValue());
+                            break;
+                        case ("phone"):
+                            contestant.setPhone(fieldValueDto.getValue());
+                            break;
+                        case ("email"):
+                            contestant.setEmail(fieldValueDto.getValue());
+                            break;
+                        case ("vk"):
+                            contestant.setVk(fieldValueDto.getValue());
+                            break;
+                        case ("telegram"):
+                            contestant.setTelegram(fieldValueDto.getValue());
+                            break;
+                        case ("team_name"):
+                            team.setName(fieldValueDto.getValue());
+                            break;
+                        default:
+                            break;
+                    }
+                    FieldValue fieldValue = new FieldValue();
+                    fieldValue.setValue(fieldValueDto.getValue());
+                    fieldValue.setContestant(contestant);
+
+                    fieldValue.setField(FieldsMapper.INSTANCE.toField(fieldValueDto.getField()));
+                    fieldValueRepository.save(fieldValue);
+                }
+                teamRepository.save(team);
+                contestant.setTeam(team);
+                contestantRepository.save(contestant);
+                return TeamMapper.INSTANCE.toGetTeamDto(team);
+                // todo сделать через юзкейсы с проверкой реф тайп. В реф тайп сделай еще записи по полям контестанта и команды.
+                // из токена (юзер детайлс) брать юзера и совать в контестанта при его создании.
+            }
+            throw new CustomException("Соревнования не существует!");
+        }
     }
 }
+
+
 
 
 

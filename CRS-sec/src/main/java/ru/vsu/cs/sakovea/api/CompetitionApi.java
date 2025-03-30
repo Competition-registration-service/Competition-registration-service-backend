@@ -75,12 +75,44 @@ public interface CompetitionApi {
                                                                @PathVariable("competitionId") Integer competitionId);
 
     @Operation(
-            summary = "Регистрация на соревнование",
-            description = "Регистрирует участника на соревнование"
+            summary = "Регистрация на одиночное соревнование",
+            description = "Регистрирует участника на одиночное соревнование"
     )
     @PostMapping("/{id}/competition/{competitionId}/registration-page")
-    ResponseEntity<?> registerOnCompetition(@PathVariable("id") Integer id,
+    ResponseEntity<?> registerOnSingleCompetition(@PathVariable("id") Integer id,
                                             @PathVariable("competitionId") Integer competitionId,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails,
                                             @RequestBody List<RequestFieldValueDto> requestFieldValueDto);
+
+    @Operation(
+            summary = "Проверка кода доступа к команде",
+            description = "Проверяет код доступа к команде"
+    )
+    @PostMapping("/{id}/competition/{competitionId}/registration-page/{team-code}/confirm")
+    ResponseEntity<?> checkTeamAccessCode(@PathVariable("id") Integer id,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                  @PathVariable("competitionId") Integer competitionId,
+                                                  @PathVariable("team-code") String teamCode);
+
+
+    @Operation(
+            summary = "Регистрация на командное соревнование",
+            description = "Регистрирует участника на командное соревнование"
+    )
+    @PostMapping("/{id}/competition/{competitionId}/registration-page/team")
+    ResponseEntity<?> registerOnTeamCompetition(@PathVariable("id") Integer id,
+                                            @PathVariable("competitionId") Integer competitionId,
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @RequestBody List<RequestFieldValueDto> requestFieldValueDto);
+
+    @Operation(
+            summary = "Регистрация капитана на командное соревнование",
+            description = "Регистрирует капитана на командное соревнование"
+    )
+    @PostMapping("/{id}/competition/{competitionId}/registration-page/team")
+    ResponseEntity<?> capitanRegisterOnTeamCompetition(@PathVariable("id") Integer id,
+                                                @PathVariable("competitionId") Integer competitionId,
+                                                @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                @RequestBody List<RequestFieldValueDto> requestFieldValueDto);
+
 }

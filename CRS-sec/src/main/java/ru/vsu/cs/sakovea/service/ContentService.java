@@ -68,7 +68,7 @@ public class ContentService {
 
     public Content updateContent(UserDetailsImpl userDetails, ContentDto contentDto) {
         checkIsUserAdmin(userDetails);
-        Content content = new Content();
+        Content content = contentRepository.findById(contentDto.getId()).get();
 
         if (contentDto.getFeelingContent() != null){
             content.setFeelingContent(contentDto.getFeelingContent());

@@ -22,7 +22,7 @@ public interface RefValueMapper {
 
     RefValueResponseDto toRefValueResponseDto(RefValue refValue);
 
-    @IterableMapping(elementTargetType = RefValueDto.class)
+    @IterableMapping(elementTargetType = RefValueResponseDto.class)
     List<RefValueResponseDto> toRefValueResponseDtoList(List<RefValue> refValueList);
 
     RefValue toRefValue(RefValueDto refValueDto);

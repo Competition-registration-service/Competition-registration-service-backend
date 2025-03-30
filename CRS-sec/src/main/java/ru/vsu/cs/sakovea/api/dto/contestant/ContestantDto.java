@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.vsu.cs.sakovea.api.dto.fieldvalue.FieldValueDto;
-import ru.vsu.cs.sakovea.api.dto.TeamDto;
+import ru.vsu.cs.sakovea.api.dto.team.TeamDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 
