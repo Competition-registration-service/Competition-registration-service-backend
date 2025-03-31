@@ -5,6 +5,7 @@ import org.mapstruct.factory.Mappers;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueResponseDto;
 import ru.vsu.cs.sakovea.api.dto.team.GetTeamDto;
+import ru.vsu.cs.sakovea.api.dto.team.GetTeamForCompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.team.TeamDto;
 import ru.vsu.cs.sakovea.models.RefValue;
 import ru.vsu.cs.sakovea.models.Team;
@@ -23,5 +24,10 @@ public interface TeamMapper {
 
     @IterableMapping(elementTargetType = GetTeamDto.class)
     List<GetTeamDto> toGetTeamDtoList(List<Team> teams);
+
+    GetTeamForCompetitionDto toGetTeamForCompetitionDto(Team team);
+
+    @IterableMapping(elementTargetType = GetTeamForCompetitionDto.class)
+    List<GetTeamForCompetitionDto> toGetTeamForCompetitionDtoList(List<Team> teams);
 
 }

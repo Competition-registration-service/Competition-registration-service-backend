@@ -174,25 +174,42 @@ public class CompetitionService {
     }
 
 
-    public EventDto getEvent(Integer id) {
+    public EventDto getEvent(Integer id, UserDetailsImpl userDetails) {
         EventDto eventDto = new EventDto();
-        Competition event = competitionRepository.findById(id).get();
-        eventDto.setName(event.getName());
-        eventDto.setStartDate(event.getStartDate());
-        eventDto.setEndDate(event.getEndDate());
-        eventDto.setCid(event.getCid());
-        eventDto.setCompetitions(CompetitionMapper.INSTANCE.toGetCompetitionDtoList(event.getCompetitions()));
-        eventDto.setContents(ContentMapper.INSTANCE.toResponseContentDtoList(event.getContents()));
-        return eventDto;
+        Competition event = competitionRepository.findById(id).orElse(null);
+        if (event != null) {
+            eventDto.setName(event.getName());
+            eventDto.setStartDate(event.getStartDate());
+            eventDto.setEndDate(event.getEndDate());
+            eventDto.setCid(event.getCid());
+            eventDto.setCompetitions(CompetitionMapper.INSTANCE.toGetCompetitionDtoList(event.getCompetitions()));
+            eventDto.setContents(ContentMapper.INSTANCE.toResponseContentDtoList(event.getContents()));
+            eventDto.setRole(RefValueMapper.INSTANCE.toRefValueDto(userDetails.getUser().getRoles().getFirst().getRefRole()));
+            return eventDto;
+        }
+        throw new CustomException("Такого мероприятия не существует!");
     }
 
-    public GetCompetitionDto getCompetition(Integer eventId, Integer id) {
+    public GetCompetitionDto getCompetition(Integer eventId, Integer id, UserDetailsImpl userDetails) {
         Competition competition = competitionRepository.findByIdAndParent(id, competitionRepository.findById(eventId).get());
+        GetCompetitionDto getCompetitionDto = new GetCompetitionDto();
         if (competition != null) {
-            System.out.println(CompetitionMapper.INSTANCE.toGetCompetitionDto(competition));
+            getCompetitionDto.setName(competition.getName());
+            getCompetitionDto.setStartDate(competition.getStartDate());
+            getCompetitionDto.setEndDate(competition.getEndDate());
+            getCompetitionDto.setCid(competition.getCid());
+            getCompetitionDto.setMinNumOfTeamMem(competition.getMinNumOfTeamMem());
+            getCompetitionDto.setMaxNumOfTeamMem(competition.getMaxNumOfTeamMem());
+            getCompetitionDto.setRefComp(RefValueMapper.INSTANCE.toRefValueDto(competition.getRefComp()));
+            getCompetitionDto.setRefCompCount(RefValueMapper.INSTANCE.toRefValueDto(competition.getRefCompCount()));
+            getCompetitionDto.setRefCompAge(RefValueMapper.INSTANCE.toRefValueDto(competition.getRefCompAge()));
+            getCompetitionDto.setContents(ContentMapper.INSTANCE.toContentDtoList(competition.getContents()));
+            getCompetitionDto.setContestants(ContestantMapper.INSTANCE.toGetContestantDtoList(competition.getContestants()));
+            getCompetitionDto.setTeams(TeamMapper.INSTANCE.toGetTeamForCompetitionDtoList(competition.getTeams()));
+            getCompetitionDto.setRole(RefValueMapper.INSTANCE.toRefValueDto(userDetails.getUser().getRoles().getFirst().getRefRole()));
             return CompetitionMapper.INSTANCE.toGetCompetitionDto(competition);
         }
-        throw new CustomException("Тело пришло пустое из БД");
+        throw new CustomException("Такого соревнования не существует!");
     }
 
     public List<GetCompetitionDto> getAllCompetition(Integer eventId) {
@@ -202,7 +219,7 @@ public class CompetitionService {
 
 
     public List<ResponseFieldDto> getCompetitionRegistrationPage(Integer id, Integer competitionId) {
-        Competition event = competitionRepository.findById(id).get();
+        Competition event = competitionRepository.findById(id).orElse(null);
         if (event == null) {
             throw new CustomException("Такого мероприятия не существует!");
         } else {
@@ -218,7 +235,7 @@ public class CompetitionService {
     public Object createCompetitionRegistrationPage(UserDetailsImpl userDetails, CreateFieldDto createFieldDto,
                                                     Integer id, Integer competitionId) {
         checkIsUserAdmin(userDetails);
-        Competition event = competitionRepository.findById(id).get();
+        Competition event = competitionRepository.findById(id).orElse(null);
         if (event == null) {
             throw new CustomException("Такого мероприятия не существует!");
         } else {
@@ -247,7 +264,7 @@ public class CompetitionService {
 
     public Object registerOnCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
                                         List<RequestFieldValueDto> requestFieldValueDto) {
-        Competition event = competitionRepository.findById(id).get();
+        Competition event = competitionRepository.findById(id).orElse(null);
         if (event == null) {
             throw new CustomException("Такого мероприятия не существует!");
         } else {
@@ -297,8 +314,14 @@ public class CompetitionService {
                     fieldValue.setField(FieldsMapper.INSTANCE.toField(fieldValueDto.getField()));
                     fieldValueRepository.save(fieldValue);
                 }
+                UserCompPerm role = new UserCompPerm();
+                role.setCompetition(competition);
+                role.setUser(user);
+                role.setRefRole(refValueRepository.findRefValueByValueCid(Role.CONTESTANT.toString()));
+                contestant.getUser().getRoles().add(role);
+                userCompPermsRepository.save(role);
                 contestantRepository.save(contestant);
-                return CompetitionMapper.INSTANCE.toCompetitionDto(competition);
+                return true;
                 // todo сделать через юзкейсы с проверкой реф тайп. В реф тайп сделай еще записи по полям контестанта и команды.
                 // из токена (юзер детайлс) брать юзера и совать в контестанта при его создании.
             }
@@ -326,7 +349,7 @@ public class CompetitionService {
     }
 
     public Object checkAccessCode(Integer id, UserDetailsImpl userDetails, Integer competitionId, String teamCode) {
-        Competition event = competitionRepository.findById(id).get();
+        Competition event = competitionRepository.findById(id).orElse(null);
         if (event == null) {
             throw new CustomException("Такого мероприятия не существует!");
         } else {
@@ -336,6 +359,7 @@ public class CompetitionService {
                     Contestant contestant = new Contestant();
                     contestant.setUser(userDetails.getUser());
                     contestant.setTeam(teamRepository.findTeamByAccessCode(teamCode));
+                    contestant.setCompetition(competition);
                     return "Команда найдена!";
                 }
                 throw new CustomException("Такой команды не существует! Неверный код!");
@@ -345,9 +369,9 @@ public class CompetitionService {
         }
     }
 
-    public Object registerOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
+    public Object capitanRegisterOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
                                             List<RequestFieldValueDto> requestFieldValueDto) {
-        Competition event = competitionRepository.findById(id).get();
+        Competition event = competitionRepository.findById(id).orElse(null);
         if (event == null) {
             throw new CustomException("Такого мероприятия не существует!");
         } else {
@@ -407,12 +431,80 @@ public class CompetitionService {
                     fieldValue.setField(FieldsMapper.INSTANCE.toField(fieldValueDto.getField()));
                     fieldValueRepository.save(fieldValue);
                 }
+                UserCompPerm role = new UserCompPerm();
+                role.setCompetition(competition);
+                role.setUser(user);
+                role.setRefRole(refValueRepository.findRefValueByValueCid(Role.CAPITAN.toString()));
+                contestant.getUser().getRoles().add(role);
+                userCompPermsRepository.save(role);
                 teamRepository.save(team);
                 contestant.setTeam(team);
                 contestantRepository.save(contestant);
                 return TeamMapper.INSTANCE.toGetTeamDto(team);
                 // todo сделать через юзкейсы с проверкой реф тайп. В реф тайп сделай еще записи по полям контестанта и команды.
                 // из токена (юзер детайлс) брать юзера и совать в контестанта при его создании.
+            }
+            throw new CustomException("Соревнования не существует!");
+        }
+    }
+
+    public Object registerOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
+                                            List<RequestFieldValueDto> requestFieldValueDto) {
+        Competition event = competitionRepository.findById(id).orElse(null);
+        if (event == null) {
+            throw new CustomException("Такого мероприятия не существует!");
+        } else {
+            Competition competition = competitionRepository.findById(competitionId).get();
+
+            if (event.getCompetitions().contains(competition)) {
+                User user = userDetails.getUser();
+                Contestant contestant = contestantRepository.findByUserAndCompetition(user, competition);
+                contestant.setTeamCreator(false);
+
+                for (RequestFieldValueDto fieldValueDto : requestFieldValueDto) {
+                    String type = fieldValueDto.getField().getRefType().getValueCid();
+                    switch (type) {
+                        case ("surname"):
+                            contestant.setSurname(fieldValueDto.getValue());
+                            break;
+                        case ("name"):
+                            contestant.setName(fieldValueDto.getValue());
+                            break;
+                        case ("patronymic"):
+                            contestant.setThirdname(fieldValueDto.getValue());
+                            break;
+                        case ("login"):
+                            contestant.setNickname(fieldValueDto.getValue());
+                            break;
+                        case ("phone"):
+                            contestant.setPhone(fieldValueDto.getValue());
+                            break;
+                        case ("email"):
+                            contestant.setEmail(fieldValueDto.getValue());
+                            break;
+                        case ("vk"):
+                            contestant.setVk(fieldValueDto.getValue());
+                            break;
+                        case ("telegram"):
+                            contestant.setTelegram(fieldValueDto.getValue());
+                            break;
+                        default:
+                            break;
+                    }
+                    FieldValue fieldValue = new FieldValue();
+                    fieldValue.setValue(fieldValueDto.getValue());
+                    fieldValue.setContestant(contestant);
+                    fieldValue.setField(FieldsMapper.INSTANCE.toField(fieldValueDto.getField()));
+                    fieldValueRepository.save(fieldValue);
+                }
+                UserCompPerm role = new UserCompPerm();
+                role.setCompetition(competition);
+                role.setUser(user);
+                role.setRefRole(refValueRepository.findRefValueByValueCid(Role.CONTESTANT.toString()));
+                contestant.getUser().getRoles().add(role);
+                userCompPermsRepository.save(role);
+                contestantRepository.save(contestant);
+                return TeamMapper.INSTANCE.toGetTeamDto(contestant.getTeam());
             }
             throw new CustomException("Соревнования не существует!");
         }

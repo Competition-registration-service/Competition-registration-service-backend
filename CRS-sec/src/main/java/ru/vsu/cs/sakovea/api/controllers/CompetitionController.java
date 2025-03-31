@@ -25,9 +25,9 @@ public class CompetitionController implements CompetitionApi {
     private final ContentService contentService;
 
     @Override
-    public ResponseEntity<?> getEvent(Integer id) {
+    public ResponseEntity<?> getEvent(Integer id, UserDetailsImpl userDetails) {
         try {
-            return ResponseEntity.ok(competitionService.getEvent(id));
+            return ResponseEntity.ok(competitionService.getEvent(id, userDetails));
         } catch (CustomException e) {
             return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
@@ -35,9 +35,9 @@ public class CompetitionController implements CompetitionApi {
     }
 
     @Override
-    public ResponseEntity<?> getCompetition(Integer eventId, Integer id) {
+    public ResponseEntity<?> getCompetition(Integer eventId, Integer id, UserDetailsImpl userDetails) {
         try {
-            return ResponseEntity.ok(competitionService.getCompetition(eventId, id));
+            return ResponseEntity.ok(competitionService.getCompetition(eventId, id, userDetails));
         } catch (CustomException e) {
             return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
@@ -105,7 +105,7 @@ public class CompetitionController implements CompetitionApi {
     @Override
     public ResponseEntity<?> registerOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails, List<RequestFieldValueDto> requestFieldValueDto) {
         try {
-            return ResponseEntity.ok(competitionService.registerOnCompetition(id, competitionId, userDetails, requestFieldValueDto));
+            return ResponseEntity.ok(competitionService.registerOnTeamCompetition(id, competitionId, userDetails, requestFieldValueDto));
         } catch (CustomException e) {
             return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }
@@ -114,7 +114,7 @@ public class CompetitionController implements CompetitionApi {
     @Override
     public ResponseEntity<?> capitanRegisterOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails, List<RequestFieldValueDto> requestFieldValueDto) {
         try {
-            return ResponseEntity.ok(competitionService.registerOnTeamCompetition(id, competitionId, userDetails, requestFieldValueDto));
+            return ResponseEntity.ok(competitionService.capitanRegisterOnTeamCompetition(id, competitionId, userDetails, requestFieldValueDto));
         } catch (CustomException e) {
             return ResponseEntity.badRequest().body(e.getMessageAsJson());
         }

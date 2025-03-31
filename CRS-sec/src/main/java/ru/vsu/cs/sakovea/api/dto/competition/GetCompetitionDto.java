@@ -4,10 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.vsu.cs.sakovea.api.dto.contestant.GetContestantDto;
+import ru.vsu.cs.sakovea.api.dto.team.GetTeamForCompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.team.TeamDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.contestant.ContestantDto;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueDto;
+import ru.vsu.cs.sakovea.api.dto.userCompPerms.GetUserCompPermDto;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -27,8 +30,9 @@ public class GetCompetitionDto {
     private RefValueDto refCompCount;
     private RefValueDto refCompAge;
     private List<ContentDto> contents;
-    private List<ContestantDto> contestants;
-    private List<TeamDto> teams;
+    private List<GetContestantDto> contestants;
+    private List<GetTeamForCompetitionDto> teams;
+    private RefValueDto role;
 }
 
 
