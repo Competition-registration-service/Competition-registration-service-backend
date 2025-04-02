@@ -12,19 +12,22 @@ import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
 import ru.vsu.cs.sakovea.api.dto.field.CreateFieldDto;
+import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueResponseDto;
 import ru.vsu.cs.sakovea.api.dto.user.ChangeUserRoleDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserForAdminDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
-import ru.vsu.cs.sakovea.exeptions.CustomException;
+import ru.vsu.cs.sakovea.exceptions.CustomException;
 import ru.vsu.cs.sakovea.mapper.ContentMapper;
 import ru.vsu.cs.sakovea.models.Competition;
+import ru.vsu.cs.sakovea.models.Content;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.service.CompetitionService;
 import ru.vsu.cs.sakovea.service.ContentService;
 import ru.vsu.cs.sakovea.service.UserService;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -41,23 +44,14 @@ public class AdminController implements AdminPanelApi {
 
 
     @Override
-    public ResponseEntity<?> createEvent(HttpServletResponse response, UserDetailsImpl userDetails, CreateEventDto eventDto) {
-        try {
+    public ResponseEntity<Competition> createEvent(HttpServletResponse response, UserDetailsImpl userDetails, CreateEventDto eventDto) {
             return ResponseEntity.ok(competitionService.createEvent(userDetails, eventDto));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
     }
 
     @Override
-    public ResponseEntity<?> updateEvent(HttpServletResponse response, UserDetailsImpl userDetails,
+    public ResponseEntity<Competition> updateEvent(HttpServletResponse response, UserDetailsImpl userDetails,
                                                    CompetitionDto competitionDto) {
-        try {
             return ResponseEntity.ok(competitionService.updateEvent(userDetails, competitionDto));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
-
     }
 
 
@@ -65,96 +59,54 @@ public class AdminController implements AdminPanelApi {
      и минимумом челов в команде пропадают или наоборот их нет и если выбирается командное то появляются"
      **/
     @Override
-    public ResponseEntity<?> createCompetition(HttpServletResponse response, UserDetailsImpl userDetails,
+    public ResponseEntity<Competition> createCompetition(HttpServletResponse response, UserDetailsImpl userDetails,
                                                CompetitionCreateDto competitionCreateDto, int eventId) {
-        try {
             return ResponseEntity.ok(competitionService.createCompetition(userDetails, competitionCreateDto, eventId));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
     }
 
     @Override
-    public ResponseEntity<?> updateCompetition(HttpServletResponse response, UserDetailsImpl userDetails,
+    public ResponseEntity<Competition> updateCompetition(HttpServletResponse response, UserDetailsImpl userDetails,
                                                          CompetitionDto competitionDto, int eventId) {
-        try {
             return ResponseEntity.ok(competitionService.updateCompetition(userDetails, competitionDto));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
-
     }
 
     @Override
-    public ResponseEntity<?> createCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
+    public ResponseEntity<Content> createCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
                                                        RequestContentDto contentDto, int competitionId) {
-        try {
             return ResponseEntity.ok(contentService.createContent(userDetails, contentDto, competitionId));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
-
     }
 
     @Override
-    public ResponseEntity<?> updateCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
+    public ResponseEntity<ContentDto > updateCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
                                                                 ContentDto contentDto, int competitionId) {
-        try {
             return ResponseEntity.ok(ContentMapper.INSTANCE.toContentDto(contentService.updateContent(userDetails,
                     contentDto)));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
-
     }
 
     @Override
-    public ResponseEntity<?> getAllUsers(UserDetailsImpl userDetails, Integer offset, Integer limit) {
-        try {
+    public ResponseEntity<List<GetUserForAdminDto>> getAllUsers(UserDetailsImpl userDetails, Integer offset, Integer limit) {
             return ResponseEntity.ok(userService.getAllUsersPagination(userDetails, offset, limit));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
-
     }
 
     @Override
-    public ResponseEntity<?> getUserForAdmin(UserDetailsImpl userDetails, int userId) {
-        try {
+    public ResponseEntity<UserDto> getUserForAdmin(UserDetailsImpl userDetails, int userId) {
             return ResponseEntity.ok(userService.getUserForAdmin(userDetails, userId));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
-
     }
 
     @Override
-    public ResponseEntity<?> changeUserRole(UserDetailsImpl userDetails, int userId, ChangeUserRoleDto userRoleDto) {
-        try {
+    public ResponseEntity<UserDto > changeUserRole(UserDetailsImpl userDetails, int userId, ChangeUserRoleDto userRoleDto) {
             return ResponseEntity.ok(userService.changeUserRole(userDetails, userId, userRoleDto));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
-
     }
 
     @Override
     public ResponseEntity<?> createCompetitionRegistrationPage(HttpServletResponse response, UserDetailsImpl userDetails,
                                                                CreateFieldDto createFieldDto, Integer id, Integer competitionId) {
-        try {
-            return ResponseEntity.ok(competitionService.createCompetitionRegistrationPage(userDetails, createFieldDto, id, competitionId));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
+            competitionService.createCompetitionRegistrationPage(userDetails, createFieldDto, id, competitionId);
+            return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<?> getRefValuesAdmin(UserDetailsImpl userDetails) {
-        try {
+    public ResponseEntity<Map<String, List<RefValueResponseDto>>> getRefValuesAdmin(UserDetailsImpl userDetails) {
             return ResponseEntity.ok(competitionService.getRefValues(userDetails));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
     }
-
 }

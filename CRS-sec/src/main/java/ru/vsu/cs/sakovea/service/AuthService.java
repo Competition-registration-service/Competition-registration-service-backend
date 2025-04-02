@@ -12,7 +12,7 @@ import ru.vsu.cs.sakovea.api.dto.registration.ChangePasswordByEmail;
 import ru.vsu.cs.sakovea.api.dto.registration.JWTRequestDto;
 import ru.vsu.cs.sakovea.api.dto.registration.JWTResponseDto;
 import ru.vsu.cs.sakovea.api.dto.registration.RegistrationDto;
-import ru.vsu.cs.sakovea.exeptions.CustomException;
+import ru.vsu.cs.sakovea.exceptions.CustomException;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
@@ -40,7 +40,7 @@ public class AuthService {
     private final RefValueRepository refValueRepository;
     private final UserCompPermsRepository compPermsRepository;
 
-    public ResponseEntity<?> register(RegistrationDto registrationDto) {
+    public String register(RegistrationDto registrationDto) {
 
         if (registrationDto == null || !isValidRegistrationData(registrationDto)) {
             throw new CustomException("Invalid registration data");
@@ -73,10 +73,10 @@ public class AuthService {
 
         emailSenderService.sendConfirmationEmail(user.getEmail(), user.getActiveCode());
 
-        return ResponseEntity.ok("Регистрация прошла успешно. Подтвердите email.");
+        return "Регистрация прошла успешно. Подтвердите email.";
     }
 
-    public ResponseEntity<?> confirmEmail(String token) {
+    public String confirmEmail(String token) {
         User user = userRepository.findUserByActiveCode(token);
         if (user.getActiveCode() != null) {
             user.setActiveCode(null);
@@ -90,9 +90,9 @@ public class AuthService {
 
             user.setRoles(roles);
             userRepository.save(user);
-            return ResponseEntity.ok("Email verified successfully!");
+            return "Email verified successfully!";
         }
-        return ResponseEntity.badRequest().body("Error: Couldn't verify email");
+       throw new CustomException("Error: Couldn't verify email");
     }
 
     public JWTResponseDto login(JWTRequestDto jwtRequestDto) {
@@ -131,7 +131,7 @@ public class AuthService {
         throw new CustomException("Пользователь не подтвердил почту");
     }
 
-    public ResponseEntity<?> changePassword(ChangePasswordByEmail email) {
+    public String changePassword(ChangePasswordByEmail email) {
         User user = userRepository.findUserByEmail(email.getEmail());
 
         user.setActiveCode(UUID.randomUUID().toString());
@@ -139,7 +139,7 @@ public class AuthService {
         userRepository.save(user);
 
         emailSenderService.sendConfirmationEmail(user.getEmail(), user.getActiveCode());
-        return ResponseEntity.ok("Письмо с подтверждением отправлено на почту.");
+        return "Письмо с подтверждением отправлено на почту.";
     }
 
     private boolean isValidRegistrationData(RegistrationDto request) {

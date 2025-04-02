@@ -3,19 +3,11 @@ package ru.vsu.cs.sakovea.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
-import ru.vsu.cs.sakovea.api.dto.competition.EventDto;
-import ru.vsu.cs.sakovea.api.dto.competition.GetCompetitionDto;
-import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
-import ru.vsu.cs.sakovea.api.dto.content.ResponseContentDto;
-import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
 import ru.vsu.cs.sakovea.api.dto.fieldvalue.RequestFieldValueDto;
-import ru.vsu.cs.sakovea.api.dto.user.UserDto;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 
 import java.util.List;
@@ -93,11 +85,11 @@ public interface CompetitionApi {
             summary = "Проверка кода доступа к команде",
             description = "Проверяет код доступа к команде"
     )
-    @PostMapping("/{id}/competition/{competitionId}/registration-page/{team-code}/confirm")
+    @PostMapping("/{id}/competition/{competitionId}/registration-page/{teamCode}/confirm")
     ResponseEntity<?> checkTeamAccessCode(@PathVariable("id") Integer id,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails,
                                           @PathVariable("competitionId") Integer competitionId,
-                                          @PathVariable("team-code") String teamCode);
+                                          @PathVariable("teamCode") String teamCode);
 
 
     @Operation(

@@ -9,7 +9,8 @@ import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
 import ru.vsu.cs.sakovea.api.dto.fieldvalue.FieldValueDto;
 import ru.vsu.cs.sakovea.api.dto.fieldvalue.RequestFieldValueDto;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueResponseDto;
-import ru.vsu.cs.sakovea.exeptions.CustomException;
+import ru.vsu.cs.sakovea.api.dto.team.GetTeamDto;
+import ru.vsu.cs.sakovea.exceptions.CustomException;
 import ru.vsu.cs.sakovea.mapper.*;
 import ru.vsu.cs.sakovea.models.*;
 import org.passay.CharacterRule;
@@ -232,7 +233,7 @@ public class CompetitionService {
         }
     }
 
-    public Object createCompetitionRegistrationPage(UserDetailsImpl userDetails, CreateFieldDto createFieldDto,
+    public void createCompetitionRegistrationPage(UserDetailsImpl userDetails, CreateFieldDto createFieldDto,
                                                     Integer id, Integer competitionId) {
         checkIsUserAdmin(userDetails);
         Competition event = competitionRepository.findById(id).orElse(null);
@@ -262,7 +263,7 @@ public class CompetitionService {
         }
     }
 
-    public Object registerOnCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
+    public Boolean registerOnCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
                                         List<RequestFieldValueDto> requestFieldValueDto) {
         Competition event = competitionRepository.findById(id).orElse(null);
         if (event == null) {
@@ -348,7 +349,7 @@ public class CompetitionService {
                 ));
     }
 
-    public Object checkAccessCode(Integer id, UserDetailsImpl userDetails, Integer competitionId, String teamCode) {
+    public String checkAccessCode(Integer id, UserDetailsImpl userDetails, Integer competitionId, String teamCode) {
         Competition event = competitionRepository.findById(id).orElse(null);
         if (event == null) {
             throw new CustomException("Такого мероприятия не существует!");
@@ -369,7 +370,7 @@ public class CompetitionService {
         }
     }
 
-    public Object capitanRegisterOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
+    public GetTeamDto capitanRegisterOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
                                             List<RequestFieldValueDto> requestFieldValueDto) {
         Competition event = competitionRepository.findById(id).orElse(null);
         if (event == null) {
@@ -448,7 +449,7 @@ public class CompetitionService {
         }
     }
 
-    public Object registerOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
+    public GetTeamDto registerOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails,
                                             List<RequestFieldValueDto> requestFieldValueDto) {
         Competition event = competitionRepository.findById(id).orElse(null);
         if (event == null) {

@@ -1,4 +1,4 @@
-package ru.vsu.cs.sakovea.exeptions;
+package ru.vsu.cs.sakovea.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

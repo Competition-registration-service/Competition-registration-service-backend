@@ -10,7 +10,7 @@ import ru.vsu.cs.sakovea.api.UserApi;
 import ru.vsu.cs.sakovea.api.dto.user.ChangePasswordDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
-import ru.vsu.cs.sakovea.exeptions.CustomException;
+import ru.vsu.cs.sakovea.exceptions.CustomException;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.repository.UserRepository;
@@ -33,41 +33,24 @@ public class UserController implements UserApi {
 //    }
 
     @Override
-    public ResponseEntity<?> getUser(UserDetailsImpl userDetails) {
-        try {
+    public ResponseEntity<GetUserDto> getUser(UserDetailsImpl userDetails) {
             return ResponseEntity.ok(userService.getUser(userDetails));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
     }
 
     @Override
     public ResponseEntity<?> updateUser(HttpServletResponse response, UserDetailsImpl userDetails, @Valid UserDto userDto) {
-        try {
             userService.updateUser(userDetails, userDto);
             return ResponseEntity.noContent().build();
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
     }
 
     @Override
-    public ResponseEntity<?> updateUserPassword(ChangePasswordDto changePasswordDto) {
-        try {
+    public ResponseEntity<String> updateUserPassword(ChangePasswordDto changePasswordDto) {
             return ResponseEntity.ok(userService.updateUserPassword(changePasswordDto));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
     }
 
     @Override
-    public ResponseEntity<?> changePassword(UserDetailsImpl userDetails) {
-        try {
+    public ResponseEntity<String> changePassword(UserDetailsImpl userDetails) {
             return ResponseEntity.ok(userService.changePassword(userDetails));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
-
     }
 
 }

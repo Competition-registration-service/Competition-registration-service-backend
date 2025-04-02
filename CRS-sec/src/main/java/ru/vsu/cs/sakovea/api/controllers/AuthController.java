@@ -12,7 +12,7 @@ import ru.vsu.cs.sakovea.api.dto.registration.JWTResponseDto;
 import ru.vsu.cs.sakovea.api.dto.registration.RegistrationDto;
 import ru.vsu.cs.sakovea.api.dto.user.ChangePasswordDto;
 import ru.vsu.cs.sakovea.api.dto.user.UserDto;
-import ru.vsu.cs.sakovea.exeptions.CustomException;
+import ru.vsu.cs.sakovea.exceptions.CustomException;
 import ru.vsu.cs.sakovea.service.AuthService;
 import ru.vsu.cs.sakovea.service.UserService;
 
@@ -30,50 +30,27 @@ public class AuthController implements AuthApi {
 
 
     @Override
-    public ResponseEntity<?> register(@Valid RegistrationDto registrationDto) {
-        try {
+    public ResponseEntity<String> register(@Valid RegistrationDto registrationDto) {
             return ResponseEntity.ok(authService.register(registrationDto));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
     }
 
     @Override
-    public ResponseEntity<?> confirmEmail(@Valid String token) {
-        try {
+    public ResponseEntity<String> confirmEmail(@Valid String token) {
             return ResponseEntity.ok(authService.confirmEmail(token));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
-
     }
 
     @Override
-    public ResponseEntity<?> login(@Valid JWTRequestDto jwtRequestDto) {
-        try {
+    public ResponseEntity<JWTResponseDto> login(@Valid JWTRequestDto jwtRequestDto) {
             return ResponseEntity.ok(authService.login(jwtRequestDto));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
-
     }
 
     @Override
-    public ResponseEntity<?> changePassword(ChangePasswordByEmail changePasswordByEmail) {
-        try {
+    public ResponseEntity<String> changePassword(ChangePasswordByEmail changePasswordByEmail) {
             return ResponseEntity.ok(authService.changePassword(changePasswordByEmail));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
-
     }
 
     @Override
-    public ResponseEntity<?> updateUserPassword(ChangePasswordDto changePasswordDto) {
-        try {
+    public ResponseEntity<String> updateUserPassword(ChangePasswordDto changePasswordDto) {
             return ResponseEntity.ok(userService.updateUserPassword(changePasswordDto));
-        } catch (CustomException e) {
-            return ResponseEntity.badRequest().body(e.getMessageAsJson());
-        }
     }
 }

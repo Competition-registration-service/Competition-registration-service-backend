@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.vsu.cs.sakovea.api.dto.registration.ChangePasswordByEmail;
 import ru.vsu.cs.sakovea.api.dto.user.*;
-import ru.vsu.cs.sakovea.exeptions.CustomException;
+import ru.vsu.cs.sakovea.exceptions.CustomException;
 import ru.vsu.cs.sakovea.mapper.UserMapper;
 import ru.vsu.cs.sakovea.models.User;
 import ru.vsu.cs.sakovea.models.UserCompPerm;
@@ -68,7 +68,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public User updateUser(UserDetailsImpl userDetails, UserDto userDto) {
+    public void updateUser(UserDetailsImpl userDetails, UserDto userDto) {
         User existingUser = userDetails.getUser();
 
         if (existingUser != null) {
@@ -101,7 +101,7 @@ public class UserService implements UserDetailsService {
             if (userDto.getPhone() != null) {
                 existingUser.setPhone(userDto.getPhone());
             }
-            return userRepository.save(existingUser);
+            userRepository.save(existingUser);
         }
         throw new CustomException("Пользователя не существует или нечего изменять");
     }
@@ -114,12 +114,12 @@ public class UserService implements UserDetailsService {
         throw new CustomException("Такого пользователя нет");
     }
 
-    public ResponseEntity<?> updateUserPassword(ChangePasswordDto changePasswordDto) {
+    public String updateUserPassword(ChangePasswordDto changePasswordDto) {
         User user = userRepository.findUserByEmail(changePasswordDto.getEmail());
         if (user != null) {
             user.setPassword(changePasswordDto.getPassword());
             userRepository.save(user);
-            return ResponseEntity.ok("Пароль успешно изменен");
+            return "Пароль успешно изменен";
         }
         throw new CustomException("Подтверждение не получено. Ссылка не действительна или пользователя с такой почтой " +
                 "не существует, введите почту на которую регистрировались!");
@@ -132,7 +132,7 @@ public class UserService implements UserDetailsService {
 
 
 
-    public ResponseEntity<?> changePassword(UserDetailsImpl userDetails) {
+    public String changePassword(UserDetailsImpl userDetails) {
         User user = userRepository.findUserByLogin(userDetails.getUser().getLogin());
 
         user.setActiveCode(UUID.randomUUID().toString());
@@ -140,7 +140,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
 
         emailSenderService.sendConfirmationEmail(user.getEmail(), user.getActiveCode());
-        return ResponseEntity.ok("Письмо с подтверждением отправлено на почту.");
+        return "Письмо с подтверждением отправлено на почту.";
     }
 
     public UserDto getUserForAdmin(UserDetailsImpl userDetails, int userId) {
