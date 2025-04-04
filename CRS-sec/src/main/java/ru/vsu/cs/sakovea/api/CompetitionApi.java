@@ -3,6 +3,7 @@ package ru.vsu.cs.sakovea.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -112,21 +113,21 @@ public interface CompetitionApi {
                                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                        @RequestBody List<RequestFieldValueDto> requestFieldValueDto);
 
-//    @Operation(
-//            summary = "Получение списка соревнований и мероприятий которые уже были",
-//            description = "Возвращает список соревнований и мероприятий которые уже были"
-//    )
-//    @GetMapping("/competitions/history")
-//    ResponseEntity<?> getHistoryOfEventAndCompetitions(@AuthenticationPrincipal UserDetailsImpl userDetails,
-//
-//                                                       @Schema(description = "Номер страницы для пагинации", minimum = "0", defaultValue = defaultOffset)
-//                                                       @RequestParam(name = "offset", defaultValue = defaultOffset)
-//                                                       @Min(0)
-//                                                       Integer offset,
-//
-//                                                       @Schema(description = "Количество мероприятий или соревнований" +
-//                                                               " на странице для пагинации", minimum = "1", maximum = "50", defaultValue = defaultLimit)
-//                                                       @RequestParam(name = "limit", defaultValue = defaultLimit)
-//                                                       @Min(1) @Max(50)
-//                                                       Integer limit);
+    @Operation(
+            summary = "Получение списка соревнований и мероприятий которые уже были",
+            description = "Возвращает список соревнований и мероприятий которые уже были"
+    )
+    @GetMapping("/competitions/history")
+    ResponseEntity<?> getHistoryOfEventAndCompetitions(@AuthenticationPrincipal UserDetailsImpl userDetails,
+
+                                                       @Schema(description = "Номер страницы для пагинации", minimum = "0", defaultValue = defaultOffset)
+                                                       @RequestParam(name = "offset", defaultValue = defaultOffset)
+                                                       @Min(0)
+                                                       Integer offset,
+
+                                                       @Schema(description = "Количество мероприятий или соревнований" +
+                                                               " на странице для пагинации", minimum = "1", maximum = "50", defaultValue = defaultLimit)
+                                                       @RequestParam(name = "limit", defaultValue = defaultLimit)
+                                                       @Min(1) @Max(50)
+                                                       Integer limit);
 }

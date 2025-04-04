@@ -119,8 +119,8 @@ public interface AdminPanelApi {
 
 
     @Operation(
-            summary = "Получение пользователя",
-            description = "Возвращает информацию о пользователе"
+            summary = "Изменение роли пользователя",
+            description = "Изменяет роль пользователя"
     )
     @PutMapping("/user/{id}")
     ResponseEntity<?> changeUserRole(@AuthenticationPrincipal UserDetailsImpl userDetails,

@@ -74,4 +74,9 @@ public class CompetitionController implements CompetitionApi {
     public ResponseEntity<GetTeamDto> capitanRegisterOnTeamCompetition(Integer id, Integer competitionId, UserDetailsImpl userDetails, List<RequestFieldValueDto> requestFieldValueDto) {
             return ResponseEntity.ok(competitionService.capitanRegisterOnTeamCompetition(id, competitionId, userDetails, requestFieldValueDto));
     }
+
+    @Override
+    public ResponseEntity<?> getHistoryOfEventAndCompetitions(UserDetailsImpl userDetails, Integer offset, Integer limit) {
+        return ResponseEntity.ok(competitionService.getHistoryOfEventsAndCompetitions(userDetails, offset, limit));
+    }
 }

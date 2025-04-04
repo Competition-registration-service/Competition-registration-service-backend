@@ -19,6 +19,12 @@ import org.passay.PasswordGenerator;
 import ru.vsu.cs.sakovea.models.enums.Role;
 import ru.vsu.cs.sakovea.repository.*;
 
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -208,7 +214,7 @@ public class CompetitionService {
             getCompetitionDto.setContestants(ContestantMapper.INSTANCE.toGetContestantDtoList(competition.getContestants()));
             getCompetitionDto.setTeams(TeamMapper.INSTANCE.toGetTeamForCompetitionDtoList(competition.getTeams()));
             getCompetitionDto.setRole(RefValueMapper.INSTANCE.toRefValueDto(userDetails.getUser().getRoles().getFirst().getRefRole()));
-            return CompetitionMapper.INSTANCE.toGetCompetitionDto(competition);
+            return getCompetitionDto;
         }
         throw new CustomException("Такого соревнования не существует!");
     }
@@ -509,6 +515,60 @@ public class CompetitionService {
             }
             throw new CustomException("Соревнования не существует!");
         }
+    }
+
+    public List<Object> getHistoryOfEventsAndCompetitions(UserDetailsImpl userDetails, int offset, int limit) {
+        Timestamp currentDate = Timestamp.from(Instant.now());
+        Pageable pageable = PageRequest.of(offset, limit);
+
+
+        Page<Competition> pastCompetitionsPage = competitionRepository.findByEndDateBefore(currentDate, pageable);
+        List<Competition> pastCompetitions = pastCompetitionsPage.getContent();
+
+
+        List<Object> result = new ArrayList<>();
+
+
+        List<Competition> events = pastCompetitions.stream()
+                .filter(comp -> comp.getParent() == null)
+                .collect(Collectors.toList());
+
+
+        List<Competition> standaloneCompetitions = pastCompetitions.stream()
+                .filter(comp -> comp.getParent() != null)
+                .filter(comp -> !events.stream().anyMatch(event -> event.getId() == comp.getParent().getId()))
+                .collect(Collectors.toList());
+
+
+        for (Competition event : events) {
+            EventDto eventDto = mapToEventDto(event, userDetails);
+
+            List<GetCompetitionDto> competitionDtos = pastCompetitions.stream()
+                    .filter(comp -> comp.getParent() != null && comp.getParent().getId() == event.getId())
+                    .map(CompetitionMapper.INSTANCE::toGetCompetitionDto)
+                    .collect(Collectors.toList());
+            eventDto.setCompetitions(competitionDtos);
+            result.add(eventDto);
+        }
+
+
+        List<GetCompetitionDto> standaloneCompetitionDtos = CompetitionMapper.INSTANCE.toGetCompetitionDtoList(standaloneCompetitions);
+        result.addAll(standaloneCompetitionDtos);
+
+        return result;
+    }
+
+
+    private EventDto mapToEventDto(Competition competition, UserDetailsImpl userDetails) {
+        return EventDto.builder()
+                .id(competition.getId())
+                .name(competition.getName())
+                .startDate(competition.getStartDate())
+                .endDate(competition.getEndDate())
+                .cid(competition.getCid())
+                .contents(ContentMapper.INSTANCE.toResponseContentDtoList(competition.getContents()))
+                .role(RefValueMapper.INSTANCE.toRefValueDto(userDetails.getUser().getRoles().getFirst().getRefRole()))
+                .build();
     }
 }
 
