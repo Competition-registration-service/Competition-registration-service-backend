@@ -5,10 +5,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.sakovea.api.dto.fieldvalue.RequestFieldValueDto;
+import ru.vsu.cs.sakovea.api.dto.file.FileDto;
+import ru.vsu.cs.sakovea.api.dto.file.RequestFileDto;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 
 import java.util.List;
@@ -130,4 +133,32 @@ public interface CompetitionApi {
                                                        @RequestParam(name = "limit", defaultValue = defaultLimit)
                                                        @Min(1) @Max(50)
                                                        Integer limit);
+
+//    @Operation(
+//            summary = "Загрузка файла для соревнования",
+//            description = "Позволяет загрузить файл для конкретного соревнования"
+//    )
+//    @PostMapping(
+//            value = "/{eventId}/competition/{competitionId}/files",
+//            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+//    )
+//    ResponseEntity<FileDto> uploadFile(
+//            @PathVariable Integer eventId,
+//            @PathVariable Integer competitionId,
+//            @RequestParam("file") MultipartFile file,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails
+//    );
+
+    @Operation(
+            summary = "Скачивание файла",
+            description = "Позволяет скачать файл по его идентификатору"
+    )
+    @GetMapping("/{id}/competition/{competitionId}/files/{storageFileId}")
+    ResponseEntity<Resource> downloadFile(
+            @PathVariable("id") Integer id,
+            @PathVariable("competitionId") Integer competitionId,
+            @PathVariable("storageFileId") String storageFileId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody FileDto fileDto
+    );
 }

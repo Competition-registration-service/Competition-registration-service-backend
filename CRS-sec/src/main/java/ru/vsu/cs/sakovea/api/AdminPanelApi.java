@@ -9,12 +9,14 @@ import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.sakovea.api.dto.competition.CompetitionCreateDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
 import ru.vsu.cs.sakovea.api.dto.field.CreateFieldDto;
+import ru.vsu.cs.sakovea.api.dto.file.RequestFileDto;
 import ru.vsu.cs.sakovea.api.dto.user.ChangeUserRoleDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserForAdminDto;
@@ -147,4 +149,15 @@ public interface AdminPanelApi {
     )
     @GetMapping("/ref-values")
     ResponseEntity<?> getRefValuesAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails);
+
+    @Operation(
+            summary = "Добавление файла",
+            description = "Добавляет файл на соревнование или мероприятие"
+    )
+    @PostMapping("/event/{id}/competition/{competitionId}/add-file")
+    ResponseEntity<?> addFile(@PathVariable("id") Integer eventId,
+                              @PathVariable("competitionId") Integer competitionId,
+                              @RequestParam("file") MultipartFile file,
+                              @AuthenticationPrincipal UserDetailsImpl userDetails,
+                              @RequestBody RequestFileDto fileDto);
 }

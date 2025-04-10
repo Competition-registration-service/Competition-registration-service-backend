@@ -4,7 +4,7 @@ import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-import ru.vsu.cs.sakovea.api.dto.FileDto;
+import ru.vsu.cs.sakovea.api.dto.file.FileDto;
 import ru.vsu.cs.sakovea.models.File;
 
 import java.util.List;

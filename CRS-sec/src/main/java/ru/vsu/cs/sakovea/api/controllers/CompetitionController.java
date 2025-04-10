@@ -1,6 +1,7 @@
 package ru.vsu.cs.sakovea.api.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,6 +11,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.GetCompetitionDto;
 import ru.vsu.cs.sakovea.api.dto.content.ResponseContentDto;
 import ru.vsu.cs.sakovea.api.dto.field.ResponseFieldDto;
 import ru.vsu.cs.sakovea.api.dto.fieldvalue.RequestFieldValueDto;
+import ru.vsu.cs.sakovea.api.dto.file.FileDto;
 import ru.vsu.cs.sakovea.api.dto.team.GetTeamDto;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.service.CompetitionService;
@@ -78,5 +80,10 @@ public class CompetitionController implements CompetitionApi {
     @Override
     public ResponseEntity<?> getHistoryOfEventAndCompetitions(UserDetailsImpl userDetails, Integer offset, Integer limit) {
         return ResponseEntity.ok(competitionService.getHistoryOfEventsAndCompetitions(userDetails, offset, limit));
+    }
+
+    @Override
+    public ResponseEntity<Resource> downloadFile(Integer eventId, Integer competitionId, String storageFileId, UserDetailsImpl userDetails, FileDto fileDto) {
+        return null;
     }
 }

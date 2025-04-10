@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.sakovea.api.AdminPanelApi;
 import ru.vsu.cs.sakovea.api.dto.competition.CompetitionCreateDto;
 import ru.vsu.cs.sakovea.api.dto.competition.CompetitionDto;
@@ -12,6 +13,7 @@ import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
 import ru.vsu.cs.sakovea.api.dto.field.CreateFieldDto;
+import ru.vsu.cs.sakovea.api.dto.file.RequestFileDto;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueResponseDto;
 import ru.vsu.cs.sakovea.api.dto.user.ChangeUserRoleDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
@@ -108,5 +110,10 @@ public class AdminController implements AdminPanelApi {
     @Override
     public ResponseEntity<Map<String, List<RefValueResponseDto>>> getRefValuesAdmin(UserDetailsImpl userDetails) {
             return ResponseEntity.ok(competitionService.getRefValues(userDetails));
+    }
+
+    @Override
+    public ResponseEntity<?> addFile(Integer eventId, Integer competitionId, MultipartFile file, UserDetailsImpl userDetails, RequestFileDto requestFileDto) {
+        return null;
     }
 }
