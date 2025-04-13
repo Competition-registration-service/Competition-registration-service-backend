@@ -5,6 +5,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 import ru.vsu.cs.sakovea.api.dto.file.FileDto;
+import ru.vsu.cs.sakovea.api.dto.file.RequestFileDto;
+import ru.vsu.cs.sakovea.api.dto.file.ResponseFileDto;
 import ru.vsu.cs.sakovea.models.File;
 
 import java.util.List;
@@ -15,6 +17,8 @@ public interface FilesMapper {
     FilesMapper INSTANCE = Mappers.getMapper(FilesMapper.class);
 
     FileDto toFileDto(File file);
+
+    ResponseFileDto toResponseFileDto(File file);
 
     @IterableMapping(elementTargetType = FileDto.class)
     List<FileDto> toFileDtoList(List<File> fileList);

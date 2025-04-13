@@ -153,12 +153,10 @@ public interface CompetitionApi {
             summary = "Скачивание файла",
             description = "Позволяет скачать файл по его идентификатору"
     )
-    @GetMapping("/{id}/competition/{competitionId}/files/{storageFileId}")
+    @GetMapping("/{id}/competition/{competitionId}/files/{storageFileId:.+}")
     ResponseEntity<Resource> downloadFile(
-            @PathVariable("id") Integer id,
             @PathVariable("competitionId") Integer competitionId,
             @PathVariable("storageFileId") String storageFileId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody FileDto fileDto
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     );
 }

@@ -159,5 +159,5 @@ public interface AdminPanelApi {
                               @PathVariable("competitionId") Integer competitionId,
                               @RequestParam("file") MultipartFile file,
                               @AuthenticationPrincipal UserDetailsImpl userDetails,
-                              @RequestBody RequestFileDto fileDto);
+                              @RequestParam("fileDto") String fileDtoJson);
 }

@@ -16,6 +16,7 @@ import ru.vsu.cs.sakovea.api.dto.team.GetTeamDto;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.service.CompetitionService;
 import ru.vsu.cs.sakovea.service.ContentService;
+import ru.vsu.cs.sakovea.service.FileService;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ import java.util.List;
 public class CompetitionController implements CompetitionApi {
     private final CompetitionService competitionService;
     private final ContentService contentService;
+    private final FileService fileService;
 
     @Override
     public ResponseEntity<EventDto> getEvent(Integer id, UserDetailsImpl userDetails) {
@@ -83,7 +85,7 @@ public class CompetitionController implements CompetitionApi {
     }
 
     @Override
-    public ResponseEntity<Resource> downloadFile(Integer eventId, Integer competitionId, String storageFileId, UserDetailsImpl userDetails, FileDto fileDto) {
-        return null;
+    public ResponseEntity<Resource> downloadFile(Integer competitionId, String storageFileId, UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(fileService.downloadFile(competitionId, storageFileId, userDetails));
     }
 }

@@ -1,5 +1,6 @@
 package ru.vsu.cs.sakovea.api.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,9 @@ import ru.vsu.cs.sakovea.api.dto.competition.CreateEventDto;
 import ru.vsu.cs.sakovea.api.dto.content.ContentDto;
 import ru.vsu.cs.sakovea.api.dto.content.RequestContentDto;
 import ru.vsu.cs.sakovea.api.dto.field.CreateFieldDto;
+import ru.vsu.cs.sakovea.api.dto.file.FileDto;
 import ru.vsu.cs.sakovea.api.dto.file.RequestFileDto;
+import ru.vsu.cs.sakovea.api.dto.file.ResponseFileDto;
 import ru.vsu.cs.sakovea.api.dto.refvalue.RefValueResponseDto;
 import ru.vsu.cs.sakovea.api.dto.user.ChangeUserRoleDto;
 import ru.vsu.cs.sakovea.api.dto.user.GetUserDto;
@@ -26,8 +29,10 @@ import ru.vsu.cs.sakovea.models.Content;
 import ru.vsu.cs.sakovea.models.UserDetailsImpl;
 import ru.vsu.cs.sakovea.service.CompetitionService;
 import ru.vsu.cs.sakovea.service.ContentService;
+import ru.vsu.cs.sakovea.service.FileService;
 import ru.vsu.cs.sakovea.service.UserService;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -43,77 +48,79 @@ public class AdminController implements AdminPanelApi {
     private final CompetitionService competitionService;
     private final ContentService contentService;
     private final UserService userService;
+    private final FileService fileService;
 
 
     @Override
     public ResponseEntity<Competition> createEvent(HttpServletResponse response, UserDetailsImpl userDetails, CreateEventDto eventDto) {
-            return ResponseEntity.ok(competitionService.createEvent(userDetails, eventDto));
+        return ResponseEntity.ok(competitionService.createEvent(userDetails, eventDto));
     }
 
     @Override
     public ResponseEntity<Competition> updateEvent(HttpServletResponse response, UserDetailsImpl userDetails,
                                                    CompetitionDto competitionDto) {
-            return ResponseEntity.ok(competitionService.updateEvent(userDetails, competitionDto));
+        return ResponseEntity.ok(competitionService.updateEvent(userDetails, competitionDto));
     }
 
 
-    /**"Если при создании соревнования выбирается поле "индивидуальное" то поля с максимумом
-     и минимумом челов в команде пропадают или наоборот их нет и если выбирается командное то появляются"
+    /**
+     * "Если при создании соревнования выбирается поле "индивидуальное" то поля с максимумом
+     * и минимумом челов в команде пропадают или наоборот их нет и если выбирается командное то появляются"
      **/
     @Override
     public ResponseEntity<Competition> createCompetition(HttpServletResponse response, UserDetailsImpl userDetails,
-                                               CompetitionCreateDto competitionCreateDto, int eventId) {
-            return ResponseEntity.ok(competitionService.createCompetition(userDetails, competitionCreateDto, eventId));
+                                                         CompetitionCreateDto competitionCreateDto, int eventId) {
+        return ResponseEntity.ok(competitionService.createCompetition(userDetails, competitionCreateDto, eventId));
     }
 
     @Override
     public ResponseEntity<Competition> updateCompetition(HttpServletResponse response, UserDetailsImpl userDetails,
                                                          CompetitionDto competitionDto, int eventId) {
-            return ResponseEntity.ok(competitionService.updateCompetition(userDetails, competitionDto));
+        return ResponseEntity.ok(competitionService.updateCompetition(userDetails, competitionDto));
     }
 
     @Override
     public ResponseEntity<Content> createCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
-                                                       RequestContentDto contentDto, int competitionId) {
-            return ResponseEntity.ok(contentService.createContent(userDetails, contentDto, competitionId));
+                                                            RequestContentDto contentDto, int competitionId) {
+        return ResponseEntity.ok(contentService.createContent(userDetails, contentDto, competitionId));
     }
 
     @Override
-    public ResponseEntity<ContentDto > updateCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
-                                                                ContentDto contentDto, int competitionId) {
-            return ResponseEntity.ok(ContentMapper.INSTANCE.toContentDto(contentService.updateContent(userDetails,
-                    contentDto)));
+    public ResponseEntity<ContentDto> updateCompetitionContent(HttpServletResponse response, UserDetailsImpl userDetails,
+                                                               ContentDto contentDto, int competitionId) {
+        return ResponseEntity.ok(ContentMapper.INSTANCE.toContentDto(contentService.updateContent(userDetails,
+                contentDto)));
     }
 
     @Override
     public ResponseEntity<List<GetUserForAdminDto>> getAllUsers(UserDetailsImpl userDetails, Integer offset, Integer limit) {
-            return ResponseEntity.ok(userService.getAllUsersPagination(userDetails, offset, limit));
+        return ResponseEntity.ok(userService.getAllUsersPagination(userDetails, offset, limit));
     }
 
     @Override
     public ResponseEntity<UserDto> getUserForAdmin(UserDetailsImpl userDetails, int userId) {
-            return ResponseEntity.ok(userService.getUserForAdmin(userDetails, userId));
+        return ResponseEntity.ok(userService.getUserForAdmin(userDetails, userId));
     }
 
     @Override
-    public ResponseEntity<UserDto > changeUserRole(UserDetailsImpl userDetails, int userId, ChangeUserRoleDto userRoleDto) {
-            return ResponseEntity.ok(userService.changeUserRole(userDetails, userId, userRoleDto));
+    public ResponseEntity<UserDto> changeUserRole(UserDetailsImpl userDetails, int userId, ChangeUserRoleDto userRoleDto) {
+        return ResponseEntity.ok(userService.changeUserRole(userDetails, userId, userRoleDto));
     }
 
     @Override
     public ResponseEntity<?> createCompetitionRegistrationPage(HttpServletResponse response, UserDetailsImpl userDetails,
                                                                CreateFieldDto createFieldDto, Integer id, Integer competitionId) {
-            competitionService.createCompetitionRegistrationPage(userDetails, createFieldDto, id, competitionId);
-            return ResponseEntity.noContent().build();
+        competitionService.createCompetitionRegistrationPage(userDetails, createFieldDto, id, competitionId);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<Map<String, List<RefValueResponseDto>>> getRefValuesAdmin(UserDetailsImpl userDetails) {
-            return ResponseEntity.ok(competitionService.getRefValues(userDetails));
+        return ResponseEntity.ok(competitionService.getRefValues(userDetails));
     }
 
     @Override
-    public ResponseEntity<?> addFile(Integer eventId, Integer competitionId, MultipartFile file, UserDetailsImpl userDetails, RequestFileDto requestFileDto) {
-        return null;
+    public ResponseEntity<ResponseFileDto> addFile(Integer eventId, Integer competitionId, MultipartFile file, UserDetailsImpl userDetails, String requestFileDto) {
+        return ResponseEntity.ok(fileService.uploadFile(eventId, competitionId, file, userDetails, requestFileDto));
     }
 }
